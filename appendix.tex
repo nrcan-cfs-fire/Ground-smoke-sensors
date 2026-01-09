@@ -1,0 +1,202 @@
+%% optional
+
+
+%%The appendix is an optional section that can contain details and data supplemental to the main text. For example, explanations of experimental details that would disrupt the flow of the main text, but nonetheless remain crucial to understanding and reproducing the research shown; figures of replicates for experiments of which representative data is shown in the main text can be added here if brief, or as Supplementary data. Mathematical proofs of results not central to the paper can be added as an appendix.
+%\usepackage{hanging}
+\appendixtitles{yes} %Leave argument "no" if all appendix headings stay EMPTY (then no dot is printed after "Appendix A"). If the appendix sections contain a heading then change the argument to "yes".
+\appendixsections{multiple} %Leave argument "multiple" if there are multiple sections. Then a counter is printed ("Appendix A"). If there is only one appendix section then change the argument to "one" and no counter is printed ("Appendix").
+\appendix
+
+\section{Patterns in historical Canadian wildfire detection}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1.0\textwidth]{Lookout_tower_distance_graph}
+    \caption{Distance between the fire ignition location and the location of a fixed human observer stationed in an observation tower equipped with basic optics (binocular or simple telescope) for fires in the Canadian province of Alberta from 2012 to 2024. 95 percent of fires were detected at 50 km or less.}
+    \label{fig:Lookout_tower_distance_graph}
+\end{figure}
+
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1.0\textwidth]{ABHist}
+    \caption{Historical fire detection mode by fire size class (at detection) and fire ignition type}
+    \label{fig:ABHist}
+\end{figure}
+
+The count of fire detection by different modality is broken down by size class and ignition type in \ref{fig:Lookout_tower_distance_graph} for the Canadian province of Alberta.  Lookout towers in Alberta are a mixture of staffed towers as well as camera-equipped lookouts.  Note that human-caused fires are typically associated with settlements and roadways, and are therefore more easily detected by public reporting, as compared to lightning fires which may start in relatively isolated forest areas distant from human activity.
+
+Using the same Alberta Historical Wildfire Database, a record of all fires observed in Alberta from 2006 to 2023 was obtained. Data was filtered to only contain observations from lookout towers. Distances between reported fire locations and tower locations were calculated and displayed on a histogram. A maximum observable distance from towers can provide a cutoff where visual detection is effective. Within the Alberta dataset some towers have distributions that are overly centralized on a specific area. Checking these locations shows that many of them come from small settlements doing waste burning or other events requiring a large fire. Three towers were discarded as outliers not indicative of random fire events but instead a social purpose. Additionally, any towers with names not matched in the tower list were discarded to avoid combing maps with location data to identify them. The histogram was normalized to fit with the gamma probability density function, PDF, before scaling it back up to match the raw histogram data.
+
+
+
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1.0\textwidth]{Detect-offset}
+    \caption{Difference in timing of first polar orbiting satellite detection vs agency detection, rounded to calendar day}
+    \label{fig:Detect-offset}
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1.0\textwidth]{Small-fire-detect}
+    \caption{Probability of one or more satellite hotspot detections by a polar orbiting fire detection sensor (e.g. MODIS or VIIRS) by final fire size and ignition type. Note that human-cause fires typically grow faster and are extinguished more quickly in Canada}
+    \label{fig:Small-fire-detect}
+\end{figure}
+
+
+Canada's National Burned Area Composite database contains records of polar orbiting fire detection (i.e. MODIS starting in 2002 and VIIRS from 2012 onwards) as well as official fire agency records of the day of first detection. Agency records as well as Landsat burn perimeters are used to filter hotspots in space and time per fire.  The date of first and last hotspot per fire are catalogued, and can be compared against the date of fire detection by the land management agency.  Using broad size classes, the detection rate of fires by polar orbiting satellite is shown in \ref{fig:Small-fire-detect}.  Similarly, the offset (rounded to the nearest integer of day) between satellite detection and agency detection by fire cause is shown in \ref{fig:Detect-offset}.
+
+
+
+\newpage
+\pagebreak
+
+\clearpage
+
+\section{Site descriptions and weather records}
+\subsection{Wainwright}
+
+
+3rd Canadian Division Support Base Detachment Wainwright is located in east-central Alberta, in the Subhumid Prairies ecozone, Aspen Parkland ecoregion. Snowmelt typically occurs in March in the region, and the months April is often relatively dry with few days of cloud cover and rain, allowing for frequent spring fires in the area before annual vegetation emergence of grasses, shrubs, and aspen leaf-out in May. Vegetation is dominantly grass, with patches of short (<10 m height) and low-density aspen and deciduous shrubs. In the aspen patches, downed wood and a thin duff layer [Otway et al., 2007] provide fuels for sustained smouldering for multiple hours after the initial passage of a fire. Some areas of the training grounds see frequent fire as a result of training activities, while other areas burned in 2024 with high tree and shrub cover had not experienced recent fire. A complete description of the vegetation ecology of the region in given in [Anderson and Bailey, 1980]. Spring time fuel loads as given in [Anderson and Bailey, 1980] are 4.5 t/ha, slightly higher than the 3.5 t/ha fuel load used in the FBP. The terrain is relatively flat for the purposes of fire growth modelling and actual fire spread. Hourly weather data was taken from the Wainwright Airfield (52.82N, 111.10W), with solar radiation instrument observations from the Kinsella agricultural monitoring station, located 35 km to the NW of the study area.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1.0\textwidth]{WR-FWI}
+    \caption{The Grassland Fire Weather Index System values for the Wainwright deployment. GFMC is the Grassland Fuel Moisture Code; GSI is the Grassland Spread Index; GFWI is the Grassland Fire Weather Index}
+    \label{fig:WR-FWI}
+\end{figure}
+
+\clearpage
+
+\subsection{Valcartier}
+
+2nd Canadian Division Support Base Valcartier is located 20 km NW of Quebec City. The site lies at the northern-most edge of the Mixedwood Plains ecozone, where the forest transitions into a typical Boreal Shield East ecosystem. The forest is a mix of broadleaf (mostly Acer spp.) with spruce, fir, and pine conifers. Prescribed fires in the training grounds typically occur in flat lowlands c. 200 m above sea level, while sensor deployment took place in lowlands as well as on numerous large and steep hills that rise up to 400 m above the valley bottom. These frequently burned valley bottom training grounds are a mixture of short grasses and shrubs with little to no tree cover, and correspond well to the O-1 matted grass fuel type in the FBP. A total of three prescribed fires took place at Valcartier in May of 2023, at which point valley bottom fuels were fully cured and dry. No wildfires occurred during the deployment of the sensors at the training ground. Weather data for this sensor deployment was taken from the Quebec City International Airport, 23 km to the SE.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1.0\textwidth]{VC2}
+    \caption{Fire and sensor locations at the Valcartier deployment}
+    \label{fig:VC2}
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1.0\textwidth]{VC-FWI}
+    \caption{Grassland Fire Weather Indices for the Valcartier deployment}
+    \label{fig:VC-FWI}
+\end{figure}
+
+\clearpage
+
+\subsection{Rock Creek}
+
+The Rock Creek prescribed fire took place on public forest lands in the Kettle River Valley of southern British Columbia, Canada. The fuels are primarily an open Douglas Fir-Ponderosa Pine woodland with a grass surface fuel. The prescribed fire operation occurred on a gentle west-facing slope of c. 10\%. Large diameter downed woody debris provides the majority of surface fuel load that can contribute to multiple hours of low-intensity smouldering and smoke production [Erasmus, 2014]. An hourly automatic weather station (also named Rock Creek) operated by the BC Wildfire Service was located 3 km south of the prescribed fire.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1.0\textwidth]{RC}
+    \caption{Fire and sensor locations at the Rock Creek deployment}
+    \label{fig:RC}
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1.0\textwidth]{RC-FWI}
+    \caption{Grassland Fire Weather Indices for the Rock Creek deployment}
+    \label{fig:RC-FWI}
+\end{figure}
+
+\clearpage
+
+\section{Fire Growth Energy Release Rate}
+
+The detailed progression of fire growth was not available for the prescribed and wildfires observed. In order to link fire observations (ignition time, weather, final fire size) with time-based observations from the smoke sensors, the Canadian Fire Behaviour Prediction (FBP) System was utilized to estimate the fire growth, intensity, and fuel consumption over time until the estimated fire size reached the reported final fire size. Estimates of the smoke plume height based on fire intensity were conducted using a separate model detailed in the Appendix. Additionally, we computed an estimated fire radiative power based on fire growth estimates as a bottom-up comparison to observed FRP from satellite. While the Canadian FBP does readily produce fire perimeter energy release rate (kW of energy release per unit length of perimeter), total fire energy release rates in W are not a formal output of the system. Following the methodology used in the Canadian Forest Fire Emissions Prediction System used in continental fire smoke forecasting [Chen et al., 2019; Griffin et al., 2019; Makar et al., 2021], the energy release rate from a single fire event is the product of the rate of area burning multiplied by the estimated fuel load (0.35 kg of dry biomass m\textsuperscript{-2} in the case of our grass fuels) and heat of combustion (18 MJ kg\textsuperscript{-1}):
+
+\begin{equation}
+P_{fire} = \left( \frac{\Delta A m_{TFC} h_{comb}}{\Delta t}\right)
+\end{equation}
+
+the Fire Radiative Power (P\textsubscript{rad}) is then estimated using the observed radiative fraction for surface fires and fine fuel beds of 18\% from Johnston et al. [2017]:
+
+\begin{equation}
+P_{rad} = f_{rad}P_{fire}
+\end{equation}
+
+where GOES (10-minute update cycle, 24-hours a day) geostationary fire detections typically have a daytime minimum FRP of detection of ~80 MW for mid-Canada latitudes (55 degrees North), and the polar orbiting VIIRS (twice daily detections) are able to detect ~1 MW fires during the daytime. A correction is additionally made for approximately 10\% absorption of MWIR in the atmosphere [Griffin et al., 2004].
+
+As compared to the radiative fraction, the convective energy release for an spread wildfire is on the order of 52\% of the energy produced by combustion [Freeborn et al., 2008], and is similarly partitioned:
+
+\begin{equation}
+P_{conv} = f_{conv}P_{fire}
+\end{equation}
+
+Details on the Briggs plume rise model that uses in the Pconv term is given in the Appendix. Unlike satellite detection, Pconv itself is not the threshold for detection, rather the plume width, opacity, and height will dictate visibility to observers. @johnston2018 utilizing detailed historical forest fire visual detections by aircraft, estimate a minimum size of 0.2 ha for average aerial detection size. This minimum size accounts for both the instantaneous power of the fire and the formation of a sufficiently large smoke column to be visible in contrast against the sky. More intense fires will produce darker smoke that provides a greater contrast against the sky [Stack, 2024], but no adjustment for intensity and smoke colour is available from the historical records.
+
+\subsection{Plume Rise}
+
+With a knowledge of the convective energy release rate, the plume rise can be computed for a given atmospheric condition following numerous plume rise equations. For smaller fires such as those documented in this study, the Briggs plume rise equation provides a succinct analytical equation to be evaluated at the same time steps as the fire growth model. The plume height z [m] at distance x [m] from the fire is calculated as:
+
+\begin{equation}
+z_{plume} = \left[\frac{3}{2\beta^{2}}\frac{\beta_{flux}}{\pi U^3}\right]^{1/3} x^{2/3}
+\end{equation}
+
+where Bflux is a function of the convective power of the fire:
+
+\begin{equation}
+\beta_{flux} = \frac{gP_{conv}}{\rho C_{pd} \Theta_{a}}
+\end{equation}
+
+where $\Theta_{a}$ is the air temperature.
+
+\clearpage
+
+\section{Appendix References}
+%\begin{hangparas}{.25in}{1}
+
+%\leftskip 0.1in
+%\setlength{\parindent}{-10pt}
+
+% via https://tex.stackexchange.com/questions/328615/hangindent-repeated-for-each-paragraph for a no-package solution here
+\newenvironment{mybibliography}
+ {%\let\@afterindentfalse\@afterindenttrue % we want \parindent anywhere
+  \setlength{\leftskip}{2em}%
+  \setlength{\parindent}{-\leftskip}}
+ {}
+ 
+ \begin{mybibliography}
+
+Anderson, H. G., Bailey, A. W. (1980). Effects of annual burning on grassland in the aspen parkland of east-central Alberta. Canadian Journal of Botany, 58(8), 985–996. https://doi.org/10.1139/b80-121
+
+Chen, J., Anderson, K., Pavlovic, R., Moran, M. D., Englefield, P., Thompson, D. K., Munoz-Alpizar, R., Landry, H. (2019). The FireWork v2.0 air quality forecast system with biomass burning emissions from the Canadian Forest Fire Emissions Prediction System v2.03. Geoscientific Model Development, 12(7), 3283–3310. \\https://doi.org/10.5194/gmd-12-3283-2019
+
+Erasmus, H. (2014). Vaseux Lake Canadian Wildlife Service burn [Undergraduate Thesis]. University of British Columbia. https://doi.org/10.14288/1.0075585
+
+Freeborn, P. H., Wooster, M. J., Hao, W. M., Ryan, C. A., Nordgren, B. L., Baker, S. P., Ichoku, C. (2008). Relationships between energy release, fuel mass loss, and trace gas and aerosol emissions during laboratory biomass fires. Journal of Geophysical Research: Atmospheres, 113(D1). https://doi.org/10.1029/2007JD008679
+
+Griffin, D., Sioris, C., Chen, J., Dickson, N., Kovachik, A., Graaf, M. de, Nanda, S., Veefkind, P., Dammers, E., McLinden, C. A., Makar, P., Akingunola, A. (2019). The 2018 fire season in North America as seen by TROPOMI: Aerosol layer height validation and evaluation of model-derived plume heights. Atmospheric Measurement Techniques Discussions, 1–30. https://doi.org/10.5194/amt-2019-411
+
+Griffin, M., Burke, H., Kerekes, J. (2004). Radiative transfer in the midwave infrared applicable to full spectrum atmospheric characterization. IGARSS 2004. 2004 IEEE International Geoscience and Remote Sensing Symposium, 6, 4191–4194 vol.6. \\https://doi.org/10.1109/IGARSS.2004.1370059
+
+Johnston, J. M., Johnston, L. M., Wooster, M. J., Brookes, A., McFayden, C., Cantin, A. S. (2018). Satellite Detection Limitations of Sub-Canopy Smouldering Wildfires in the North American Boreal Forest. Fire, 1(2), 28. https://doi.org/10.3390/fire1020028
+
+Johnston, J. M., Wooster, M. J., Paugam, R., Wang, X., Lynham, T. J., Johnston, L. M., Johnston, J. M., Wooster, M. J., Paugam, R., Wang, X., Lynham, T. J., Johnston, L. M. (2017). Direct estimation of Byram’s fire intensity from infrared remote sensing imagery. International Journal of Wildland Fire, 26(8), 668–684. https://doi.org/10.1071/WF16178
+
+Makar, P. A., Akingunola, A., Chen, J., Pabla, B., Gong, W., Stroud, C., Sioris, C., Anderson, K., Cheung, P., Zhang, J., Milbrandt, J. (2021). Forest-fire aerosol–weather feedbacks over western North America using a high-resolution, online coupled air-quality model. Atmospheric Chemistry and Physics, 21(13), 10557–10587. \\ https://doi.org/10.5194/acp-21-10557-2021
+
+Otway, S. G., Bork, E. W., Anderson, K. R., Alexander, M. E., Otway, S. G., Bork, E. W., Anderson, K. R., Alexander, M. E. (2007). Predicting sustained smouldering combustion in trembling aspen duff in Elk Island National Park, Canada. International Journal of Wildland Fire, 16(6), 690–701. https://doi.org/10.1071/WF06033
+
+Stack, A. P. (2024). Influence of Airborne Ocularly Assessed Stand Density on Wildfire Escapes and Containment Challenges [M.Sc. Thesis]. University of Alberta Thesis Archive. https://doi.org/10.7939/r3-cyk2-2e98
+
+\end{mybibliography}
+%\end{hangparas}
+
+\clearpage
+
+%\section{Appendix References}
+%\bibliography{./Appendix/Appendixbibfile.bib}
+
+
+%\section{}
+%All appendix sections must be cited in the main text. In the appendixes, Figures, Tables, etc. should be labeled starting with `A', e.g., Figure A1, Figure A2, etc.

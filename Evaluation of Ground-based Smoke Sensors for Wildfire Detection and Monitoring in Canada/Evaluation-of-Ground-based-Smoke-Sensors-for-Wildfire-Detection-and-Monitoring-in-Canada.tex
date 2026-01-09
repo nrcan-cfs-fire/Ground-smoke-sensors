@@ -1,0 +1,970 @@
+%  LaTeX support: latex@mdpi.com
+%  For support, please attach all files needed for compiling as well as the log file, and specify your operating system, LaTeX version, and LaTeX editor.
+
+%=================================================================
+% pandoc conditionals added to preserve backwards compatibility with previous versions of rticles
+
+\documentclass[fire,article,submit,moreauthors]{Definitions/mdpi}
+
+
+%% Some pieces required from the pandoc template
+\setlist[itemize]{leftmargin=*,labelsep=5.8mm}
+\setlist[enumerate]{leftmargin=*,labelsep=4.9mm}
+
+
+%--------------------
+% Class Options:
+%--------------------
+
+%---------
+% article
+%---------
+% The default type of manuscript is "article", but can be replaced by:
+% abstract, addendum, article, book, bookreview, briefreport, casereport, comment, commentary, communication, conferenceproceedings, correction, conferencereport, entry, expressionofconcern, extendedabstract, datadescriptor, editorial, essay, erratum, hypothesis, interestingimage, obituary, opinion, projectreport, reply, retraction, review, perspective, protocol, shortnote, studyprotocol, systematicreview, supfile, technicalnote, viewpoint, guidelines, registeredreport, tutorial
+% supfile = supplementary materials
+
+%----------
+% submit
+%----------
+% The class option "submit" will be changed to "accept" by the Editorial Office when the paper is accepted. This will only make changes to the frontpage (e.g., the logo of the journal will get visible), the headings, and the copyright information. Also, line numbering will be removed. Journal info and pagination for accepted papers will also be assigned by the Editorial Office.
+
+%------------------
+% moreauthors
+%------------------
+% If there is only one author the class option oneauthor should be used. Otherwise use the class option moreauthors.
+
+%---------
+% pdftex
+%---------
+% The option pdftex is for use with pdfLaTeX. Remove "pdftex" for (1) compiling with LaTeX & dvi2pdf (if eps figures are used) or for (2) compiling with XeLaTeX.
+
+%=================================================================
+% MDPI internal commands - do not modify
+\firstpage{1}
+\makeatletter
+\setcounter{page}{\@firstpage}
+\makeatother
+\pubvolume{1}
+\issuenum{1}
+\articlenumber{0}
+\pubyear{2023}
+\copyrightyear{2023}
+%\externaleditor{Academic Editor: Firstname Lastname}
+\datereceived{ }
+\daterevised{ } % Comment out if no revised date
+\dateaccepted{ }
+\datepublished{ }
+%\datecorrected{} % For corrected papers: "Corrected: XXX" date in the original paper.
+%\dateretracted{} % For corrected papers: "Retracted: XXX" date in the original paper.
+\hreflink{https://doi.org/} % If needed use \linebreak
+%\doinum{}
+%\pdfoutput=1 % Uncommented for upload to arXiv.org
+
+%=================================================================
+% Add packages and commands here. The following packages are loaded in our class file: fontenc, inputenc, calc, indentfirst, fancyhdr, graphicx, epstopdf, lastpage, ifthen, float, amsmath, amssymb, lineno, setspace, enumitem, mathpazo, booktabs, titlesec, etoolbox, tabto, xcolor, colortbl, soul, multirow, microtype, tikz, totcount, changepage, attrib, upgreek, array, tabularx, pbox, ragged2e, tocloft, marginnote, marginfix, enotez, amsthm, natbib, hyperref, cleveref, scrextend, url, geometry, newfloat, caption, draftwatermark, seqsplit
+% cleveref: load \crefname definitions after \begin{document}
+
+%=================================================================
+% Please use the following mathematics environments: Theorem, Lemma, Corollary, Proposition, Characterization, Property, Problem, Example, ExamplesandDefinitions, Hypothesis, Remark, Definition, Notation, Assumption
+%% For proofs, please use the proof environment (the amsthm package is loaded by the MDPI class).
+
+%=================================================================
+% Full title of the paper (Capitalized)
+\Title{Evaluation of Ground-based Smoke Sensors for Wildfire Detection
+and Monitoring in Canada}
+
+% MDPI internal command: Title for citation in the left column
+\TitleCitation{Evaluation of Ground-based Smoke Sensors for Wildfire
+Detection and Monitoring in Canada}
+
+% Author Orchid ID: enter ID or remove command
+%\newcommand{\orcidauthorA}{0000-0000-0000-000X} % Add \orcidA{} behind the author's name
+%\newcommand{\orcidauthorB}{0000-0000-0000-000X} % Add \orcidB{} behind the author's name
+
+
+% Authors, for the paper (add full first names)
+\Author{Dan K.
+Thompson$^{1,*}$\href{https://orcid.org/0000-0003-4937-8875}
+{\orcidicon}, Giovanni Fusina$^{2}$, Patrick Jackson$^{2}$}
+
+
+%\longauthorlist{yes}
+
+
+% MDPI internal command: Authors, for metadata in PDF
+\AuthorNames{Dan K. Thompson, Giovanni Fusina, Patrick Jackson}
+
+% MDPI internal command: Authors, for citation in the left column
+%\AuthorCitation{Lastname, F.; Lastname, F.; Lastname, F.}
+% If this is a Chicago style journal: Lastname, Firstname, Firstname Lastname, and Firstname Lastname.
+\AuthorCitation{Thompson, D.K.; Fusina, G.; Jackson, P}
+
+% Affiliations / Addresses (Add [1] after \address if there is only one affiliation.)
+\address{%
+$^{1}$ \quad Natural Resources Canada, Canadian Forest Service, Great
+Lakes Forestry Centre, Sault Ste. Marie,
+Canada; \href{mailto:daniel.thompson@nrcan-rncan.gc.ca}{\nolinkurl{daniel.thompson@nrcan-rncan.gc.ca}}\\
+$^{2}$ \quad Defence Research and Development Canada, Ottawa, Canada; \\
+}
+
+% Contact information of the corresponding author
+\corres{Correspondence: \href{mailto:daniel.thompson@nrcan.rncan.gc.ca}{\nolinkurl{daniel.thompson@nrcan.rncan.gc.ca}}}
+
+% Current address and/or shared authorship
+
+
+
+
+
+
+
+
+% The commands \thirdnote{} till \eighthnote{} are available for further notes
+
+% Simple summary
+
+%\conference{} % An extended version of a conference paper
+
+% Abstract (Do not insert blank lines, i.e. \\)
+\abstract{In Canada, early fire detection is an important component of
+wildfire management, and utilizes a combined effort approach including
+public reports, aviation patrols, and satellite observations. The role
+of ground-based continuous smoke sensors has not been formally assessed
+in Canadian wildfire management detection systems. Dense networks of
+ground-based, internet-enabled continuous smoke sensors were deployed at
+three locations across southern Canada during 2023 and 2024, in concert
+with planned prescribed fire in grass fuels as well as incidental
+wildfire ignitions. Smoke sensor detections of fires was compared to
+polar orbiting and geostationary fire detections. Large fire events
+(50--600 ha) with a ground smoke detector distance of 1--2 km was
+observed on most occasions (n=7), but the detection rate dropped to 30\%
+for fires 1 ha or smaller. Follow-on smoke monitoring after the initial
+detection offered valuable information on smoke production and
+dispersion across multiple sensors. This typically night-time
+smouldering smoke production fell below the threshold for geostationary
+satellite fire observation, and is otherwise only captured sparingly by
+polar orbiting satellites. Thus, ground-based smoke detection systems
+likely fit an important niche of monitoring low-energy
+(i.e.~smouldering) smoke events from fully contained fires, or to
+monitor fires considered recently extinguished.}
+
+
+% Keywords
+\keyword{smoke; fire detection; Canada}
+
+% The fields PACS, MSC, and JEL may be left empty or commented out if not applicable
+%\PACS{J0101}
+%\MSC{}
+%\JEL{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Only for the journal Diversity
+%\LSID{\url{http://}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Only for the journal Applied Sciences
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Only for the journal Data
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Only for the journal Toxins
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Only for the journal Encyclopedia
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Only for the journal Advances in Respiratory Medicine
+%\addhighlights{yes}
+%\renewcommand{\addhighlights}{%
+
+%\noindent This is an obligatory section in “Advances in Respiratory Medicine”, whose goal is to increase the discoverability and readability of the article via search engines and other scholars. Highlights should not be a copy of the abstract, but a simple text allowing the reader to quickly and simplified find out what the article is about and what can be cited from it. Each of these parts should be devoted up to 2~bullet points.\vspace{3pt}\\
+%\textbf{What are the main findings?}
+% \begin{itemize}[labelsep=2.5mm,topsep=-3pt]
+% \item First bullet.
+% \item Second bullet.
+% \end{itemize}\vspace{3pt}
+%\textbf{What is the implication of the main finding?}
+% \begin{itemize}[labelsep=2.5mm,topsep=-3pt]
+% \item First bullet.
+% \item Second bullet.
+% \end{itemize}
+%}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% tightlist command for lists without linebreak
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+
+\usepackage[utf8]{inputenc}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+
+\begin{document}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}\label{introduction}
+
+Fire activity in Canada reached a record of 15 Mha burned in 2023,
+nearly double the prior record from 1986-2022 \citep{hanes2025}. Recent
+wildfire seasons in Canada have caused increasing public concern due to
+poor air quality and health impacts
+\citep{hertelendySeasonsSmokeFire2024, michaudLetterCanadaGlobal2024},
+impacts on critical infrastructure and the threat of evacuations. On
+average between 2010 and 2019, roughly 25,000 people were evacuated
+yearly due to wildfires in Canada
+\citep{christiansonWildlandFireEvacuations2024}. Detailed annual costing
+of wildfires up to 2016 was estimated between CAD 10 to 25 billion
+\citep{hopeWildfireSuppressionCosts2016} and is likely higher in recent
+years with larger area burned. Canadian wildland fire management
+agencies spend over CAD 1 billion in direct costs
+annually\citep{stocksForestFireManagement2016, hopeWildfireSuppressionCosts2016}.
+All these statistics are expected to increase due to the effects of
+climate change
+\citep{wangIncreasingFrequencyExtreme2015, hopeWildfireSuppressionCosts2016}.
+
+One of the main challenges of wildfire fighting is early detection of
+ignitions. With earlier detection, the rate of success of the initial
+firefighting response increases dramatically
+\citep{korkolaComparativeAnalysisWildfire2024, hirschReviewInitialAttack1996, hirschUsingExpertJudgment1998}.
+The critical importance of early wildfire suppression stems from
+multiple physical phenomena that facilitate early direct suppression (in
+Canada, typically using water and at times chemical fire retardant).
+Fire ignitions are typically at a single point, be it from lightning or
+human ignition; such ignitions if occurring underneath a dense forest
+canopy may persist as an easily-suppressed surface fire for hours under
+low to moderate fire weather conditions, while concurrent ignitions at
+the edges of forest or in clearing will intensify rapidly
+\citep{mcraeInfluenceIgnitionType2017}. This early fire growth is of far
+lower intensity that is more easily suppressed by aviation suppression
+resources
+\citep{wheatleyModellingInitialAttack2022, mcfaydenReferenceGuideDrop2023}
+and dramatically lower total fire perimeter, owing to the geometric
+increase in fire perimeter length over time as a fire accelerates
+\citep{mcalpineAccelerationFirePoint1991}. This baseline initial attack
+success rate in Canada (defined variously as the fire remaining under a
+threshold size or being contained by the following day) is typically
+over 80--90\%, which represents a high success rate for the most common
+small fires discovered at 1 ha or less in area
+\citep{wheatleyModellingInitialAttack2022}. Fires discovered at much
+larger sizes (c.~5--10 ha) owing to a delay in detection or acutely
+intense fire behaviour are show much lower IA success rates of 5--25\%
+\citep{wheatleyModellingInitialAttack2022}.
+
+Forest and other vegetation fire response and coordination in Canada
+varies by location. Within the municipal boundary of larger incorporated
+communities and rural agricultural areas, vegetation fire reporting and
+dispatch is typically handled via the same common emergency dispatch
+line as structure fire suppression. Fires occurring in the forest areas
+of Canada, predominantly public lands, is handled via a separate
+dedicated fire reporting and dispatch system operated by the provincial
+or territorial fire management agency
+\citep{tymstraWildfireManagementCanada2019}. This forest fire dispatch
+and response system not only takes in calls from the public (via 9-1-1
+or a dedicated wildfire reporting line), but also from dedicated fire
+detection platforms such as fixed observers (i.e.~fire towers with human
+and/or camera installations), fixed-wing dedicated detection flights
+\citep{mcfaydenRiskAssessmentWildland2019}, patrolling firefighting
+crews in rotary-wing aircraft, civil aviators, and satellite thermal
+anomalies \citep{johnstonSatelliteDetectionLimitations2018}. Fixed
+observation platforms are readily able to detect small fires at
+distances of 20--30 km, and at times as much as 50 km (Figure
+\ref{fig:Lookout_tower_distance_graph}). For managed forest areas in
+Canada with dispersed communities and industrial activities, public
+reporting of newly ignited small and more readily suppressed
+(\textless0.2 ha) human-caused fires occurs for 50\% of all new fires;
+fire management agency ground and air patrols as well as fixed lookout
+towers are responsible for the other 50\% of detections (Figure
+\ref{fig:ABHist}). For lightning-caused fires that are typically further
+from roads and settlements, public reporting of small fires is still the
+initial detection mode in 34\% of small lightning fires, with aircraft
+patrols responsible for 27\% of detection while the remainder come from
+ground patrols and lookout towers.
+
+Fire detection solely by satellite is not a typical form of fire initial
+observation in Canada's populated forest and agricultural regions (and
+is not documented as a primary detection mode in most agency records). A
+retrospective analysis of the burned area records of \citet{skakun2022}
+shows that approximately 16\% of all fires are observed by polar
+orbiting satellites prior to discovery and cataloguing by fire
+management agencies (Figure \ref{fig:Detect-offset}). At the same time,
+polar orbiting satellites are inefficient at detecting small fires which
+are often under control within 1--2 days; a majority of fires in Canada
+less than 100 ha are not detected by polar orbiting satellite (Figure
+\ref{fig:Small-fire-detect}). In the case of Canada's largely
+unpopulated tundra, satellite detection is the primary mode of the
+infrequent lightning-caused fires in the region \citep{hethcoat2024}.
+
+The detection of large, fast moving grass fires using the geostationary
+GOES satellite's ABI imager as the initial detection mode has been
+documented in the western US Great Plains
+\citep{lindley2016, lindley2024}, where formal fire detection and
+assessment is limited to largely local volunteers and public reporting.
+The utility of geostationary fire detection in Canada's agricultural
+regions that also lie outside of formalized wildfire protection regions
+is unknown, but likely carries a similar utility.
+
+To date, distributed wireless small-sensor networks of smoke and/or
+thermal detectors have not been operationally deployed in Canada. Such
+systems have been proposed in other jurisdictions
+\citep[e.g.][]{sonDesignImplementationForestFires2006} with primarily
+theoretical and simulation evaluation of such systems
+\citep[e.g.][]{sernaDistributedForestFire2015}. With the recent
+availability of commercial vendors making such distributed small sensor
+systems available to communities or fire management agencies, an field
+evaluation of smoke-detecting ground wildfire sensors was conducted
+through the 2023 and 2024 seasons during prescribed burns as well as
+incidental wildfires at three locations in varying terrain across
+Canada. All fires consisted of primary grass fuels with some shrubs and
+sparse trees. Ground-based fire detection records were compared to a
+proxy for human visual detection (smoke plume height) as well as
+satellite fire detection records. Data on ignition time, fire weather,
+and final fire size were used in conjunction with standard fire growth
+models to estimate fire size and activity at varying detection
+intervals.
+
+\section{Methods}\label{methods}
+
+\subsection{Hourly Fire Weather}\label{hourly-fire-weather}
+
+The widely used Canadian Fire Weather Index (FWI) System
+\citep{vanwagner1987}, using only noon-hour weather observations, is
+optimized to track moisture conditions and fire potential in pine
+forests or similar ecosystems. Recently, the FWI system has been revised
+to a new version FWI2025
+\citep{canadianforestservicefiredangergroup2025} in order to incorporate
+fully hourly weather observations, as is typical in agricultural,
+aeronautical, air quality, and other weather monitoring applications.
+FWI2025 contains three grassland variants of the existing FWI System
+components. First, a Grassland Fuel Moisture Code (GFMC) aims to track
+the aggregate flammability of live and dead grass fuels in an open
+setting by incorporating familiar hourly weather observations
+(temperature, humidity, rainfall, wind) as well as open solar radiation
+and a user-provided estimate of the relative fraction of cured (dead) vs
+live grass fuels. GFMC ranges from 0 to 101, with conditions 80 and
+above corresponding to those able to sustain ignition. Secondly, the
+Grassland Spread Index (GSI) incorporates the GFMC and the measured wind
+speed to approximate the potential fire spread rate through grasslands.
+Lastly, the Grassland Fire Weather Index (GFWI) is an index of fire
+suppression difficulty. Full details on each metric is given in
+\citep{canadianforestservicefiredangergroup2025}.
+
+\subsection{Ground-based smoke
+sensors}\label{ground-based-smoke-sensors}
+
+The present ground wildfire sensor initiative is a collaboration between
+Defence Research and Development Canada, Centre for Security Science and
+the United States Department of Homeland Security, Science and
+Technology Directorate (DHS(S\&T)). The DHS(S\&T) SCITI program funded a
+number of industrial partners for the initial development of ground
+wildfire sensors. After initial testing in laboratories and other
+evaluations in controlled settings \citep{usdhsSTWildfireSensor2021},
+DHS(S\&T) has selected two sensor manufacturers to proceed to the second
+phase of the wildfire sensor development program in which DRDC CSS and
+stakeholders are taking part. DRDC CSS co-ordinated the participation of
+a number of Canadian stakeholders: the Canadian Forces Fire Marshall
+(CFFM), CFB Valcartier, CFB Edmonton Detachment Waiwright, Société de
+protection des forêts contre le feu (SOPFEU), Ville de Baie-Comeau,
+Ville de Chibougamaum, and the British Columbia Wildfire Service (BCWS).
+The Canadian Forest Service (CFS) is provided technical and scientific
+guidance in this effort. CAF (Canadian Armed Forces) members on large
+forested bases (such as Valcartier) spend significant amounts of time
+fighting wildfires on their bases that occur as a result of training
+exercises. We focus on the deployment on the sensors at CFB Valcartier
+and Wainwright, as well as a BCWS prescribed burn, during 2023 and 2024.
+Other deployments did not experience adjacent wildfires or prescribed
+fires and will not be reported here. Detailed site descriptions and
+sensor layout maps are presented in the supplementary material.
+
+Prescribed burns are ideal for testing sensor effectiveness with a known
+start location, time, and final burned area. In 2023, twenty sensors
+were deployed in CFB Valcartier to collect data from the prescribed
+burns scheduled before the start of the 2023 fire season. In 2024, ten
+of the twenty sensors remained in Valcartier with the other ten
+relocated to CFB Wainwright to collect from two different prescribed
+burn schedules. Using the known ignition location and time combined with
+total burned area allows for characterization of the fire for comparison
+with other methods of detection.
+
+Ground sensors detect particulate matter (PM) and volatile organic
+compound (VOC) concentrations, and report data every 5 minutes. Sensors
+are powered by solar panels and communicate via LTE wireless protocol.
+Best deployed at a height of greater than 3 m (trees or utility poles).
+Warnings (first detection with a lower threshold) or Alerts (higher
+threshold) are sent out by the sensors if these concentrations pass a
+certain threshold determined by vendor-provided algorithms; warnings are
+approximated by PM\textsubscript{2.5} observations exceeding 30
+ug/m\textsuperscript{3} and alerts as observations exceeding 200
+ug/m\textsuperscript{3}. A web portal allowed stakeholders to monitor
+sensor status and receive text notifications for the wildfire ignitions
+Warnings and Alerts. The focus of this work is on the applied utility of
+the sensor network for small and localized smoke events; the precision
+or accuracy of lower-cost particulate concentration measurements has
+been extensively studied elsewhere \citep{holder2020}. The analyses
+contained herein are not meant to be an evaluation of the specifications
+and performance of the individual ground sensors. The main purpose of
+conducting these analyses is to provide advice to provincial/territorial
+wildfire suppression managers on what the most effective utilization of
+such ground sensors is operationally -- either in conjunction with other
+detection methods, or on their own; and before, during and after a
+suppression operation.
+
+\subsection{Other detection modes}\label{other-detection-modes}
+
+Ground-based smoke sensor observations were compared to other more
+common detection modes, namely (1) visual detection (both public and
+fire agency) as well as (2) polar orbiting satellites for detection of
+smaller and smouldering fires, and (3) geostationary fire detection for
+large and fast-growing fires. Visual detection potential was assessed
+using the modelled fire growth from the Canadian Forest Fire Behaviour
+Prediction System \citep{forestrycanadafiredangerratinggroup1992},
+coupled to the widely used plume rise model from Briggs that can be
+applied to small to medium sized fires \citep{tory2018}. The
+relationship between plume rise height, diameter, and detection distance
+is not robustly understood; historical records indicate visual detection
+of forest fires \textless1 ha is possible upwards of 25 km given clear
+line of sight and favourable atmospheric conditions (see Appendix F).
+Fire radiative power over time as a function of fire growth was also
+estimated for each fire using the same fire growth models from
+\citep{forestrycanadafiredangerratinggroup1992} as were used in plume
+rise estimates (see Appendix F). Fire radiative power estimate over time
+were made assuming 17\% of instantaneous total area-wise fire intensity
+is released as infrared radiation, following field-scale observations in
+similar fuels by \citet{johnston2017}.
+
+Satellite detection records (both polar orbiting and geostationary) for
+each individual fire event were obtained from the NASA FIRMS archive
+\citep{hewson2024}. A qualitative assessment of cloud cover for daytime
+periods was accessed via the NASA Worldview service for the satellite
+overpasses during fire events (including those without satellite
+detection).
+
+\begin{table}[!h]
+\centering\centering\centering
+\caption{\label{tab:allfires-ign-wx-table}Weather and fire weather conditions at the time of ignition for each fire. Acronyms as follows: GFMC = Grassland Fuel Moisture Code; GSI = Grassland Spread Index; GFWI = Grassland Fire Weather Index.}
+\centering
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
+\begin{tabular}[t]{>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}}
+\hline
+FireName & Ignition time & Lat & Lon & Air temp & Relative Humidity (\%) & Wind Speed (km/h) & Wind Dir (deg) & Solar Radiation (W/m2) & GFMC & GSI & GFWI\\
+\hline
+WR-01 & 2024-04-03 10:35:00 & 52.75 & -111.03 & 7 & 70 & 33 & 325 & 332 & 82 & 29 & 27\\
+\hline
+WR-02 & 2024-04-04 09:43:00 & 52.76 & -111.05 & 4 & 40 & 9 & 48 & 261 & 84 & 7 & 17\\
+\hline
+WR-03 & 2024-04-04 13:50:00 & 52.83 & -110.92 & 6 & 40 & 16 & 72 & 298 & 85 & 24 & 26\\
+\hline
+WR-04 & 2024-04-08 16:35:00 & 52.79 & -110.92 & 15 & 24 & 18 & 205 & 242 & 90 & 47 & 31\\
+\hline
+WR-05 & 2024-04-09 16:05:00 & 52.79 & -110.92 & 14 & 20 & 22 & 326 & 316 & 89 & 56 & 32\\
+\hline
+WR-06 & 2024-04-10 10:38:00 & 52.79 & -110.92 & 7 & 45 & 30 & 317 & 410 & 84 & 38 & 29\\
+\hline
+WR-07 & 2024-04-10 23:06:00 & 52.79 & -110.97 & 0 & 48 & 6 & 48 & 0 & 85 & 4 & 14\\
+\hline
+WR-08 & 2024-04-10 10:00:00 & 52.80 & -110.89 & 7 & 45 & 27 & 326 & 363 & 83 & 32 & 28\\
+\hline
+WR-09 & 2024-04-11 10:30:00 & 52.78 & -110.89 & 11 & 23 & 15 & 152 & 515 & 89 & 36 & 29\\
+\hline
+WR-10 & 2024-04-11 09:00:00 & 52.79 & -110.98 & 8 & 34 & 14 & 171 & 372 & 85 & 20 & 25\\
+\hline
+WR-11 & 2024-04-23 12:19:00 & 52.78 & -110.94 & 19 & 15 & 10 & 304 & 680 & 93 & 37 & 29\\
+\hline
+WR-12 & 2024-04-23 09:59:00 & 52.80 & -110.93 & 14 & 23 & 9 & 278 & 581 & 90 & 21 & 25\\
+\hline
+WR-13 & 2024-04-24 11:10:00 & 52.75 & -110.92 & 20 & 15 & 30 & 177 & 584 & 89 & 96 & 36\\
+\hline
+WR-14 & 2024-04-24 10:57:00 & 52.81 & -110.97 & 20 & 15 & 30 & 177 & 584 & 89 & 96 & 36\\
+\hline
+WR-15 & 2024-04-24 16:07:00 & 52.82 & -111.01 & 20 & 14 & 14 & 225 & 420 & 92 & 50 & 31\\
+\hline
+WR-16 & 2024-04-25 10:36:00 & 52.83 & -111.01 & 14 & 31 & 9 & 346 & 480 & 88 & 18 & 24\\
+\hline
+VC-01 & 2023-05-13 12:00:00 & 47.02 & -71.55 & 20 & 22 & 5 & 30 & 691 & 91 & 10 & 19\\
+\hline
+VC-02 & 2023-05-23 10:08:00 & 47.02 & -71.57 & 11 & 56 & 11 & 24 & 423 & 81 & 13 & 21\\
+\hline
+VC-03 & 2023-05-29 08:55:00 & 46.96 & -71.58 & 16 & 49 & 17 & 7 & 503 & 78 & 20 & 25\\
+\hline
+RC-01 & 2024-09-19 12:48:00 & 49.09 & -118.97 & 23 & 54 & 5 & 283 & 620 & 84 & 2 & 7\\
+\hline
+\end{tabular}}
+\end{table}
+
+\section{Results and Discussion}\label{results-and-discussion}
+
+\subsection{Detection of large fires (over 50
+ha)}\label{detection-of-large-fires-over-50-ha}
+
+\subsubsection{Wainwright}\label{wainwright}
+
+At Wainwright, all large fires were prescribed fires with the exception
+of WR-15 which was an unplanned spillover from the WR-14 prescribed fire
+earlier that day (Figure \ref{fig:WR-FWI}). All five fires over 100 ha
+were detected by the smoke sensors (Figure \ref{fig:WR-map}), with first
+warnings 13--309 minutes after ignition and first alert at 23--338
+minutes after ignition. The median distance between the fire ignition
+point at the smoke sensor was approximately 1500 m, and ranged from 500
+m to 4.8 km. At the time of the first warning, three (WR-12, WR-09,
+WR-08) out of the five fires had already grown to their final size
+(i.e.~completed active fire growth in area) while the largest fire of
+the group, WR-15, was at approximately 420 ha of its final 600 ha fire
+size. In these cases, it was likely that the main smoke column during
+flaming combustion was lofted immediately above the nearby smoke
+sensors, and it was not until the cessation of flaming combustion that
+the convective column collapsed and residual smoke was advected. A
+similar phenomenon has been observed in experimental fires under light
+to moderate winds \citep{hudaStudyFuelSmokeDynamics2020}.
+
+For the 500 ha WR-14 prescribed fire, the southerly winds and large
+ignition area allowed the rapid detection of the WR-14 fire, which
+experienced a rapid increase from ambient PM2.5 concentrations of
+\textless10 ug/m\textsuperscript{3} to 3,260 ug/m\textsuperscript{3} at
+a sensor location 1.8 km downwind. PM concentrations continued to be
+elevated above 100 ug/m\textsuperscript{3} for an additional 4 hours.
+GOES fire detection occurred within 59 minutes after the completion of
+ignition operations, with two GOES-18 hotspots totalling 107.7 MW
+detected. NOAA VIIRS sensors detected a similar sum of 108 MW of fire
+radiative power at 149 minutes after ignition during the early afternoon
+overpasses. All of the additional sensors at Wainwright were deployed
+further south except one sensor located 3 km to the west, which also did
+not register any elevated PM concentrations. Photos of the strip backing
+fire ignition pattern at 09:00 showed light winds corresponding to
+station measurements of 10 km/h winds, but by the time of completion of
+ignition operations at 11:00, winds had increased rapidly to 30 km/h and
+relative humidity of 15\%, resulting in a Grassland Spread Index of 95
+(Table \ref{tab:allfires-ign-wx-table}). Of the large fires at
+Wainwright, WR-14 had the most severe fire weather conditions of the
+large fires and the second highest wind speeds at ignition of all
+Wainwright fires. Unique to this fire was the rapid detection both by
+the smoke sensors as well as the GOES geostationary satellite. This
+rapid spread rate coupled with stronger winds leads to a lower plume
+height and more turbulent mixing of smoke down to the surface
+\citep{freitasTechnicalNoteSensitivity2010}, which likely contributed to
+the rapid detection by the smoke sensors.
+
+Fire WR-15 was caused by an escaped spot fire from the WR-14 prescribed
+burn, and ignited at 16:07. With the southwesterly winds at 18 km/h,
+this fire spread northward and to the north of the entire sensor
+network, and was not captured by any ground-based smoke sensors until
+19:43 when wind speeds dropped below 10 km/h and the winds shifted to
+the NW, allowing for for a sensor 6 km downwind to detect the
+lower-intensity smoke plume as the winds decreased and fire spread rates
+declined at sunset. Increasing cloud cover after the ignition of WR-15
+at 16:00 likely prevented GOES detection despite the large fire size.
+Clear sky conditions the following day at 01:00 allowed for residual
+smouldering of 2 MW to be detected by the VIIRS sensor. Overnight smoke
+detection across 7 distinct sensors were made from WR-14 and WR-15 that
+extended over an area approximately 4,800 ha and up to 6.5 km from the
+WR-14 fire. Overnight winds were from the NW between 9 and 14 km/h.
+PM\textsubscript{2.5} concentrations as high as 100
+ug/m\textsuperscript{3} were detected in this dispersed ground-level
+smoke plume.
+
+Prescribed fire WR-08 (150 ha) took place at 09:00 local time under
+partially cloudy conditions with moderate relative humidity (50\%) and
+strong winds (30 km/h) from the northwest. This fire, being on the
+eastern edge of the sensor layout, was not detected until 309 minutes (5
+hours) after ignition when a sensor 1.7 km to the SW was able to detect
+smoke, likely residual smouldering smoke with little to no plume rise.
+This excess PM at the surface was detected for 4.25 hours afterwards and
+again at 18:14 and 23:37. Two additional sensors within 3 km of the burn
+registered fire warnings were made concurrently to the first sensor at
+23:30 local time, suggesting low wind conditions overnight allowed for
+the widespread lateral dispersion of smoke to both the south and
+southwest in a 60 degree cone extending at least 2.5 km. No GOES data
+were detected for this fire due to the cloud; VIIRS detection only
+occurred the following morning when 2 MW of smouldering FRP was
+detected. Approximately 1 hour prior to the VIIRS detection, smoke
+sensor warning detections were made by two sensors located 1.4 and 2.6
+km west of the fire, where PM\textsubscript{2.5} concentrations in
+excess of 200 ug/m\textsuperscript{3} were detected.
+
+Prescribed fire WR-09 took place the morning following WR-08, but under
+cloud-free conditions. The 250 ha of fuels was detected as lighter
+southeast winds at 14-18 km/h advected smoke to a sensor located 1.1 km
+SW of the prescribed fire area at 140 minutes after ignition. GOES
+detections were not recorded, likely due to a thin cirrus cloud layer
+present during the entire burning period. S-NPP VIIRS detections of 232
+MW were made within 215 minutes after ignition through the cirrus
+clouds.
+
+The 375 ha prescribed fire WR-12 was ignited approximately 500 m upwind
+of a smoke sensor under light (9 km/h) west winds. Ground-level smoke
+detection was not made until 133 minutes after ignition operations
+ceased, when a warning detection was registered. A second sensor located
+2.8 km downwind of the fire triggered a warning detection 6 minutes
+later. A MODIS Terra fire detection was made 167 minutes after ignition
+with the late morning overpass, registering a total of 108 MW of FRP.
+The first GOES detection was made 20 minutes after the MODIS Terra
+detection, with an FRP of 86 MW detected. The ground-level smoke was
+detected for nearly 5 hours. An additional 4 sensors located southeast
+of the fire detected the smoke from 15:54 to 16:37. Five additional
+detections were made by sensors after sunset, in all directions and up
+to 6 km away.
+
+The final large fire of the season, the WR-16 prescribed fire, was
+ignited at 10:36 local time under light NW winds and partial cloud cover
+of thin cirrostratus cloud, eventually reaching a final size of 75 ha.
+The first detection of the fire was by the VIIRS sensor on the NOAA-21
+satellite at 19:19 UTC, 218 minutes after ignition, where a single 7 MW
+hotspot was registered. At 19:47 UTC, two additional hotspots of 7 and
+54 MW were detected by VIIRS on Suomi-NPP. The first smoke sensor
+warning occurred 396 minutes after ignition, where a sensor 4.7 km
+downwind registered a warning. Smoke events were registered by an
+additional 7 sensors overnight. No GOES detections were recorded for
+this fire, due in part to its smaller size as well as the nearly
+complete cover of cirrostratus cloud in the afternoon, which attenuates
+midwave radiation emitted by the fire.
+
+VIIRS detections were made in all five large fires at Wainwright. In
+three cases, morning ignitions between 10:00 to 11:00 local standard
+time resulted in VIIRS detections 94 to 160 minutes later. Of these,
+only one VIIRS detection was faster than the smoke sensors, and the
+fires in all cases far exceeded the minimum VIIRS detection radiative
+power of 0.5 MW. Two fires (WR-15 and WR-08) only had fire detections
+during the 01:00 nighttime overpass as residual flaming was visible. In
+the case of WR-15, the fire's ignition was at 16:07 local time, and
+therefore after the S-NPP and NOAA satellite daytime overpasses. GOES
+geostationary detections were only made in two fires (WR-12 and WR-14),
+with very rapid detection of WR-14 within minutes of the reported
+ignition while the fire was approximately 5 ha and near the GOES FRP
+detection threshold of 85 MW.
+
+\begin{figure}
+\includegraphics[width=0.95\linewidth]{../WR} \caption{\label{fig::WR-map}Wainwright study area showing fire, sensors, and dotted lines linking the first fire detection (warning or alert) for each detected fire.  Arrow indicates observed wind direction at the time of detection.}\label{fig:WR-map}
+\end{figure}
+
+\subsubsection{Valcartier and Rock
+Creek}\label{valcartier-and-rock-creek}
+
+Prescribed fire VC-01 was ignition was completed at 14:05 local time on
+May 13 under light winds (5 km/h) but low humidity (22\%) and
+correspondingly high Grassland Fuel Moisture Content (GFMC) of 91
+(Figure \ref{fig:VC-FWI}). Conditions were mostly overcast with broken
+cloud. The light NE winds caused smoke to drift away from the sensors
+immediately east and northwest of the fire, and instead a sensor 2 km
+away made the first detection at 14:01 (Figure \ref{fig:VC2}). PM
+remained elevated at this sensor alone until 21:00 local time that
+evening. No GOES satellite detection was made of this fire, despite fire
+growth modelling approximating a peak FRP of 420 MW. Broken cloud cover
+likely interfered with any satellite fire detection. Cloud-free
+overnight conditions and into the next day allowed for a VIIRS detection
+of smouldering conditions, with 1 MW of FRP detected at 02:45 local time
+as a single pixel.
+
+By May 23, very large fires in Alberta and British Columbia, some 2,500
+to 3,000 km to the west, had begun to bring smoke aloft into the
+Valcartier region. The VC-02 prescribed fire was ignited with a single
+sensor 500 m to the northwest at 10:08 on May 23 under NE winds at 11
+km/h but higher humidity (56\%) compared to VC-01, thus GFMC was 81.
+First smoke sensor detection was not made until 13:09 local time.
+Elevated PM from only the one sensor remained until 21:00. No GOES
+detection of this fire was made, despite the reported 75 ha size and
+theoretical peak FRP of 198 MW, which is well above the minimum floor
+for GOES detection under ideal cloud-free conditions. The slower pace of
+ignition operations compared to a free-growing fire \citep{mcrae1996}
+may have reduced the growth rate and thus FRP emissions below the
+threshold for GOES detection. MODIS Aqua Aerosol Optical Depth for the
+mid-day overhead was approximately 0.12 to 0.25, and likely did not
+significantly impact fire detection.
+
+The 75 ha prescribed fire at Rock Creek took place under light winds (5
+km/h at ignition) and partially cloudy conditions (Figure
+\ref{fig:RC-FWI}) resulted in no ground-based smoke sensor detections
+until 298 minutes after ignition (Figure \ref{fig:RC}). A second sensor
+located a further 400 m downwind triggered a warning 4 minutes
+afterwards. A sensor located 900 m east and downwind did not detect the
+fire until a warning was issued at 20:10, after sunset. Three additional
+detections were made at 16:51 and through to 05:03 the following
+morning. GOES-18 detection occurred 213 minutes after ignition, when 69
+MW of FRP was observed. VIIRS did not detect the fire until 1 MW was
+observed at 2:07 by the VIIRS sensor on the NOAA-20 satellite.
+
+\subsection{Detection of small fires}\label{detection-of-small-fires}
+
+Of the smaller fires 1 ha or less, Only three (WR-06, WR-07, WR-16) of
+ten of the fires registered a warning with the smoke sensors (Table
+\ref{tab:Final-summary-table}), and only two registered an alert.
+Similar to the large fires, in all three cases the fire had already
+reached its final size (i.e.~was no longer growing) at the time of first
+warning. Fires were detected by smoke sensors 1.1 to 5.0 km away at
+90--400 minutes after ignition. Fires WR-06 and WR-16 ignited at 10:30
+local time and were likely finished burning by the SNPP and NOAA
+satellite overpasses at 13:00; the fires were likely too small for the
+critical sub-pixel area of extensive residual smouldering that could be
+detected by VIIRS \citep{johnstonSatelliteDetectionLimitations2018}. The
+single small fire at Valcartier (6 ha) did not result in any smoke
+sensor warnings or alerts, but did result in a VIIRS detection 163
+minutes after ignition.
+
+\begin{table}[!h]
+\centering\centering\centering
+\caption{\label{tab:Final-summary-table}Fire ignition and detection characteristics of each fire event, in order of decreasing final fire size in each study area.  Area, Fire Radiative Power (FRP), and plume height at warning are all estimates based on fire growth modelling.}
+\centering
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
+\begin{tabular}[t]{>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{}p{1.8cm}|>{}p{1.8cm}|>{}p{1.8cm}}
+\hline
+FireName & Final area (ha) & Distance to sensor (m) & Time first warning (min) & Time first alert (min) & Time first VIIRS (min) & Time first GOES (min) & First Obs FRP (MW) & Est. Area at warning (ha) & Est. FRP at warning (MW) & Est. Plume height at warning (m)\\
+\hline
+WR-15 & 600.00 & 6554 [m] & 246 & 355 & 766 & - & 2 & 600 & 2011 & 1367\\
+\hline
+WR-14 & 550.00 & 1812 [m] & 13 & 23 & 149 & 59 & 108 & 7 & 117 & 629\\
+\hline
+WR-12 & 375.00 & 529 [m] & 133 & 300 & 167 & 187 & 108 & 91 & 240 & 962\\
+\hline
+WR-09 & 250.00 & 1192 [m] & 140 & 158 & 215 & - & 232 & 250 & 1232 & 1334\\
+\hline
+WR-08 & 150.00 & 1739 [m] & 309 & 338 & 1095 & - & 2 & 150 & 445 & 780\\
+\hline
+WR-16 & 75.00 & 4782 [m] & 396 & - & 218 & - & 7 & 75 & 147 & 935\\
+\hline
+WR-01 & 1.00 & - & - & - & - & - & - & - & - & -\\
+\hline
+WR-04 & 1.00 & - & - & - & - & - & - & - & - & -\\
+\hline
+WR-06 & 0.60 & - & - & - & - & - & - & - & - & -\\
+\hline
+WR-07 & 0.28 & 4995 [m] & 86 & 112 & - & - & - & 0 & 2 & 230\\
+\hline
+WR-13 & 0.25 & - & - & - & - & - & - & - & - & -\\
+\hline
+WR-11 & 0.20 & - & - & - & - & - & - & - & - & -\\
+\hline
+WR-05 & 0.05 & - & - & - & - & - & - & - & - & -\\
+\hline
+WR-02 & 0.03 & - & - & - & - & - & - & - & - & -\\
+\hline
+WR-03 & 0.02 & - & - & - & - & - & - & - & - & -\\
+\hline
+WR-10 & 0.01 & - & - & - & - & - & - & - & - & -\\
+\hline
+VC-01 & 75.00 & 2109 [m] & - & 126 & 765 & - & 2 & - & - & -\\
+\hline
+VC-02 & 75.00 & 490 [m] & - & 202 & - & - & 2 & - & - & -\\
+\hline
+VC-03 & 6.00 & - & - & - & 163 & - & 3 & - & - & -\\
+\hline
+RC-01 & 75.00 & 891 [m] & 298 & 668 & - & 213 & 69 & 75 & 203 & 1058\\
+\hline
+\end{tabular}}
+\end{table}
+
+\begin{figure}
+\includegraphics[width=0.95\linewidth]{WR_all_alerts} \caption{\label{fig::WR_all_alerts}Biplot of distance from sensor to fire compared to peak PM~2.5~ concentration by detection event.  Events are coloured by the hour of the start of the detection. Data for the Wainwright study area only.}\label{fig:WR_all_alerts}
+\end{figure}
+
+\subsection{Monitoring of sustained smoke
+production}\label{monitoring-of-sustained-smoke-production}
+
+In addition to the first detection, the smoke sensors produced useful
+information on the sustained production of ground-level smoke in the
+hours after ignition and growth of the prescribed and wildfires. Smoke
+detection events were registered at Wainwright up to 17 km from the fire
+area, at concentrations over 100 ug/m\textsuperscript{3} (Figure
+\ref{fig:WR_all_alerts}). Smoke event observations the most distant from
+the fire were typically made after sunset through the early morning, and
+had a lower peak PM\textsubscript{2.5} of less than 300
+ug/m\textsuperscript{3}. Afternoon smoke event observations made near
+the peak of the daily burning conditions (highest temperature and winds,
+lowest humidity) were confined to a distance of less than 2.5 km
+typically, and only in these observations within 2.5 km were
+PM\textsubscript{2.5} concentrations in excess of 300
+ug/m\textsuperscript{3} observed. Interestingly, short duration and low
+concentration (\textless50 ug/m\textsuperscript{3} smoke events) were
+only observed at distances of 5 km or less; smoke events observed
+further afield were both of longer duration and higher concentration.
+
+\subsection{Estimating visual detection
+range}\label{estimating-visual-detection-range}
+
+At the time of the smoke sensor warning, the modelled plume top-heights
+where between 400 and 1,600 m above the ground. Against a high-contrast
+blue sky, such features are likely visible at a limit approaching the
+maximum aeronautical visibility range of 50--60 km, as supported by an
+analysis of detection distances by human observers from fire towers (see
+Supplementary Materials). Under widespread regional smoke or overcast
+conditions, the visual contrast between a smoke plume can diminish, and
+thus reduce the detection distance
+\citep{victorSimpleMethodPredicting1977}. Larger, more intense fires
+that are beyond suppression resources often feature darker (and larger)
+smoke columns \citep{stackInfluenceAirborneOcularly2024} which aids in
+the visual detection process for incidental ground-based observers. In
+Canada, fixed-wing dedicated fire detection
+\citep{foster1962, mcfaydenRiskAssessmentWildland2019} uses human
+observers, and benefits from the visual contrast of typically light
+coloured smoke against a dark forest canopy background. Ideally, initial
+fire detections are made when the fire is a small sub-canopy surface
+fire, which reduces the ability of fixed-wing or satellite fire infrared
+detection due to canopy interception of infrared energy
+\citep{johnston2018}.
+
+\subsection{Regional smoke false positives from smoke
+sensors}\label{regional-smoke-false-positives-from-smoke-sensors}
+
+In June of 2023, extensive regional smoke from wildfires 300--500 km
+upwind to the west in central Quebec severely impacted local particulate
+concentrations at the Valcartier deployment
+\citep{matz2025, boulanger2024}. This far-field smoke source caused
+system warnings and alerts that were valid at the instrument level, but
+the smoke source was from very large and very well-observed fires that
+were being heavily suppressed. This smoke emission is well predicted in
+advance and in real-time using operational air quality forecasting
+systems that incorporate satellite fire detection and smoke dispersion
+schemes such as \citet{chenFireWorkV20Air2019}.
+
+\section{Conclusions}\label{conclusions}
+
+Continuous air quality sensors with telemetry were deployed in advance
+of prescribed fire operations at a number of locations across Canada. A
+total of 20 prescribed and wildfires occurred in the vicinity of the
+sensor network, and in 6 of the 10 largest fires, the ground-based smoke
+sensor network provided superior time to first detection compared to
+satellite observations by polar orbiting and geostationary platforms.
+Given the densely populated locations, visual detection by observers
+(fire response agency or public) would have been rapid due the quick
+fire acceleration and large resultant smoke plumes. The smoke sensor
+network provided valuable information on sustained night-time fire
+smouldering activity, with residual flaming and smouldering resulting in
+smoke plumes which that travelled upwards of 10 km at night and at smoke
+concentrations far in excess of ambient levels, providing a clear
+detection signal. Satellite geostationary sensors were largely unable to
+detect overnight activity due to very low fire radiative power, while
+polar orbiting sensors provide only a handful of observations overnight
+and only under cloud-free conditions. Such ground-based smoke monitoring
+may fill a niche in fire detection and monitoring under the following
+conditions: (1) the absence of visual observers of smoke plumes
+(dedicated staff, camera tower systems, or the public), (2) frequent
+continuous cloud that obscures satellite observations of fire, (3) a
+relatively dense sensor spacing on the order of kilometres, (4)
+low-intensity fire typical of residual flaming and smouldering without
+active fire area growth, and (5) night-time or overcast conditions that
+greatly limit the visibility of the smoke plume in the sky. This
+night-time monitoring function of the smoke sensor networks appears to
+be particularly suited to this type of instrumentation, and fulfills a
+niche in the continuous monitoring of contained or extinguished fires.
+
+\section{Acknowledgements}\label{acknowledgements}
+
+The authors would like to thank Jeffrey Booth from the United States
+DHS(S\&T) for initiating the collaboration with the Canadian DND for the
+testing of the sensors. We would also like to thank Mr.~Booth for
+funding the sensors used for the results in this paper and for funding
+technical and logistical support from the vendors. We also acknowledge
+the contribution of the Canadian Safety and Security Program to develop
+the testing and evaluation of the sensors in Canada. We would like to
+thank the smoke sensors vendors N5, Inc., especially Debra Deinenger,
+Robins George and Rudy Villegas for their support.
+
+We would also like to thank Andrew Loulousis and his team at TechNexus
+Venture Collaborative for logistical organization and support of the
+bilateral US/CAN collaboration and sensor deployments. We would like to
+thank Maj. Lavigne and Sargeant-Major (ret'd) Steve Noiseux and their
+team at CFB Valcartier for their excellent support in installing the
+sensors there, as well as the late Robert Prospero, Mark Batten, Sgt
+Korosi and his team at the CF Detachment Wainwright for their excellent
+support in the installation at that location. Finally, we would like to
+thank Olivier Lundqvist, Luc Carrière and Christine Bussières at SOPFEU;
+and Samuel Siddall, Neal McLoughlin, Andrew Simpson and Ash Richardson
+and their colleagues at the BCWS for their support in this initiative.
+
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace{6pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% optional
+\supplementary{The following supporting information can be downloaded
+at:}
+
+% Only for the journal Methods and Protocols:
+% If you wish to submit a video article, please do so with any other supplementary material.
+% \supplementary{The following supporting information can be downloaded at: \linksupplementary{s1}, Figure S1: title; Table S1: title; Video S1: title. A supporting video article is available at doi: link.}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\authorcontributions{D.K.T. and G.F. conceive and designed the
+experiments; G.F. performed the experiments; D.K.T and P.J. analyzed the
+data; D.K.T. and G.F. wrote the paper.}
+
+\funding{The United States Department of Homeland Security purchased the
+sensors from the vendor, and provided in-kind support for travel and
+sensor deployment operations.}
+
+
+
+\dataavailability{Hotspot tabular data and corresponding daytime visible
+imagery are available at {[}\textbf{\emph{{[}Insert in progress Zenodo
+record{]}}}{]}}
+
+
+\conflictsofinterest{The authors declare no conflict of interest.}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Optional
+
+%% Only for journal Encyclopedia
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Optional
+\input{"appendix.tex"}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{adjustwidth}{-\extralength}{0cm}
+
+%\printendnotes[custom] % Un-comment to print a list of endnotes
+
+
+\reftitle{References}
+\bibliography{mybibfile.bib}
+
+% If authors have biography, please use the format below
+%\section*{Short Biography of Authors}
+%\bio
+%{\raisebox{-0.35cm}{\includegraphics[width=3.5cm,height=5.3cm,clip,keepaspectratio]{Definitions/author1.pdf}}}
+%{\textbf{Firstname Lastname} Biography of first author}
+%
+%\bio
+%{\raisebox{-0.35cm}{\includegraphics[width=3.5cm,height=5.3cm,clip,keepaspectratio]{Definitions/author2.jpg}}}
+%{\textbf{Firstname Lastname} Biography of second author}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% for journal Sci
+%\reviewreports{\\
+%Reviewer 1 comments and authors’ response\\
+%Reviewer 2 comments and authors’ response\\
+%Reviewer 3 comments and authors’ response
+%}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\PublishersNote{}
+\end{adjustwidth}
+
+
+\end{document}

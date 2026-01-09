@@ -1,0 +1,1589 @@
+---
+title: Evaluation of Ground-based Smoke Sensors for Wildfire Detection and Monitoring in Canada
+author:
+  - name: Dan K. Thompson
+    affil: 1,*
+    orcid: 0000-0003-4937-8875
+  - name: Giovanni Fusina
+    affil: 2
+  - name: Patrick Jackson
+    affil: 2
+affiliation:
+  - num: 1
+    address: Natural Resources Canada, Canadian Forest Service, Great Lakes Forestry Centre, Sault Ste. Marie, Canada
+    email: daniel.thompson@nrcan-rncan.gc.ca
+  - num: 2
+    address: Defence Research and Development Canada, Ottawa, Canada
+authorcitation: Thompson, D.K.; Fusina, G.; Jackson, P
+firstnote: 
+secondnote: 
+correspondence: daniel.thompson@nrcan.rncan.gc.ca
+journal: fire
+type: article
+status: submit
+abstract: |
+  In Canada, early fire detection is an important component of wildfire management, and utilizes a combined effort approach including public reports, aviation patrols, and satellite observations. The role of ground-based continuous smoke sensors has not been formally assessed in Canadian wildfire management detection systems. Dense networks of ground-based, internet-enabled continuous smoke sensors were deployed at three locations across southern Canada during 2023 and 2024, in concert with planned prescribed fire in grass fuels as well as incidental wildfire ignitions. Smoke sensor detections of fires was compared to polar orbiting and geostationary fire detections. Large fire events (50--600 ha) with a ground smoke detector distance of 1--2 km was observed on most occasions (n=7), but the detection rate dropped to 30% for fires 1 ha or smaller. Follow-on smoke monitoring after the initial detection offered valuable information on smoke production and dispersion across multiple sensors. This typically night-time smouldering smoke production fell below the threshold for geostationary satellite fire observation, and is otherwise only captured sparingly by polar orbiting satellites. Thus, ground-based smoke detection systems likely fit an important niche of monitoring low-energy (i.e. smouldering) smoke events from fully contained fires, or to monitor fires considered recently extinguished.
+keywords: |
+  smoke; fire detection; Canada
+authorcontributions: |
+  D.K.T. and G.F. conceive and designed the experiments; G.F. performed the experiments; D.K.T and P.J. analyzed the data; D.K.T. and G.F. wrote the paper.
+funding: |
+  The United States Department of Homeland Security purchased the sensors from the vendor, and provided in-kind support for travel and sensor deployment operations.
+dataavailability: |
+  Hotspot tabular data and corresponding daytime visible imagery are available at [***[Insert in progress Zenodo record]***]
+conflictsofinterest: |
+  The authors declare no conflict of interest.
+supplementary: |
+ 
+ The following supporting information can be downloaded at:  
+bibliography: mybibfile.bib
+appendix: appendix.tex
+endnotes: false
+output: 
+  rticles::mdpi_article:
+    extra_dependencies: longtable
+    latex_engine: xelatex
+header-includes:
+  - \usepackage[utf8]{inputenc}
+---
+
+```{r load-libs, message=FALSE, warning=FALSE, include=FALSE}
+##header-includes above via https://www.reddit.com/r/Rlanguage/comments/1266wbh/rmarkdown_fails_to_knit_unicode_character_u001b/
+
+###should probably do a whole renv thing here, but for now....
+library(lubridate)
+library(data.table)
+library(lutz)
+library(cffdrs)
+library(tidyverse)
+library(ggplot2)
+library(patchwork)
+library(kableExtra)### using this to make panel plots without facet_wrap and having to reformat the data....
+library(sf)
+library(units)
+library(ggrepel)
+library(scales)
+library(knitr)
+
+options(warn=-1) ##suppress all warnings
+options(ggrepel.max.overlaps = Inf)
+options(knitr.kable.NA = '-')
+
+# via https://stackoverflow.com/questions/18965637/set-global-thousand-separator-on-knitr/18967590#18967590 should set all printed numbers to have thousands separator
+knitr::knit_hooks$set(inline = function(x) {   if(!is.numeric(x)){     x   }else{    prettyNum(round(x,2), big.mark=",")    } })
+
+##manual creation of editable doc file (not working currently):
+# rmarkdown::render("~/DRDC-smoke/Evaluation of ground-based smoke sensors for wildfire detection in Canada.Rmd", output_file = "SmokeSensorsDraft.rtf")
+
+## compiler error: https://tex.stackexchange.com/questions/10706/pdftex-error-font-expansion-auto-expansion-is-only-possible-with-scalable
+
+TopOfAtmTrans <- 0.9 ### basic value for the transmittivity of midwave through a cloud-free atmosphere
+Gradientfrom10mOpen <- 1/0.6 ### correction of 10-m open winds to mid-plume gradient winds ~500m above the ground
+```
+
+# Introduction
+
+Fire activity in Canada reached a record of 15 Mha burned in 2023, nearly double the prior record from 1986-2022 [@hanes2025]. Recent wildfire seasons in Canada have caused increasing public concern due to poor air quality and health impacts [@hertelendySeasonsSmokeFire2024; @michaudLetterCanadaGlobal2024], impacts on critical infrastructure and the threat of evacuations. On average between 2010 and 2019, roughly 25,000 people were evacuated yearly due to wildfires in Canada [@christiansonWildlandFireEvacuations2024]. Detailed annual costing of wildfires up to 2016 was estimated between CAD 10 to 25 billion [@hopeWildfireSuppressionCosts2016] and is likely higher in recent years with larger area burned. Canadian wildland fire management agencies spend over CAD 1 billion in direct costs annually[@stocksForestFireManagement2016; @hopeWildfireSuppressionCosts2016]. All these statistics are expected to increase due to the effects of climate change [@wangIncreasingFrequencyExtreme2015; @hopeWildfireSuppressionCosts2016].
+
+One of the main challenges of wildfire fighting is early detection of ignitions. With earlier detection, the rate of success of the initial firefighting response increases dramatically [@korkolaComparativeAnalysisWildfire2024; @hirschReviewInitialAttack1996; @hirschUsingExpertJudgment1998]. The critical importance of early wildfire suppression stems from multiple physical phenomena that facilitate early direct suppression (in Canada, typically using water and at times chemical fire retardant). Fire ignitions are typically at a single point, be it from lightning or human ignition; such ignitions if occurring underneath a dense forest canopy may persist as an easily-suppressed surface fire for hours under low to moderate fire weather conditions, while concurrent ignitions at the edges of forest or in clearing will intensify rapidly [@mcraeInfluenceIgnitionType2017]. This early fire growth is of far lower intensity that is more easily suppressed by aviation suppression resources [@wheatleyModellingInitialAttack2022; @mcfaydenReferenceGuideDrop2023] and dramatically lower total fire perimeter, owing to the geometric increase in fire perimeter length over time as a fire accelerates [@mcalpineAccelerationFirePoint1991]. This baseline initial attack success rate in Canada (defined variously as the fire remaining under a threshold size or being contained by the following day) is typically over 80--90%, which represents a high success rate for the most common small fires discovered at 1 ha or less in area [@wheatleyModellingInitialAttack2022]. Fires discovered at much larger sizes (c. 5--10 ha) owing to a delay in detection or acutely intense fire behaviour are show much lower IA success rates of 5--25% [@wheatleyModellingInitialAttack2022].
+
+Forest and other vegetation fire response and coordination in Canada varies by location. Within the municipal boundary of larger incorporated communities and rural agricultural areas, vegetation fire reporting and dispatch is typically handled via the same common emergency dispatch line as structure fire suppression. Fires occurring in the forest areas of Canada, predominantly public lands, is handled via a separate dedicated fire reporting and dispatch system operated by the provincial or territorial fire management agency [@tymstraWildfireManagementCanada2019]. This forest fire dispatch and response system not only takes in calls from the public (via 9-1-1 or a dedicated wildfire reporting line), but also from dedicated fire detection platforms such as fixed observers (i.e. fire towers with human and/or camera installations), fixed-wing dedicated detection flights [@mcfaydenRiskAssessmentWildland2019], patrolling firefighting crews in rotary-wing aircraft, civil aviators, and satellite thermal anomalies [@johnstonSatelliteDetectionLimitations2018]. Fixed observation platforms are readily able to detect small fires at distances of 20--30 km, and at times as much as 50 km (Figure \ref{fig:Lookout_tower_distance_graph}). For managed forest areas in Canada with dispersed communities and industrial activities, public reporting of newly ignited small and more readily suppressed (\<0.2 ha) human-caused fires occurs for 50% of all new fires; fire management agency ground and air patrols as well as fixed lookout towers are responsible for the other 50% of detections (Figure \ref{fig:ABHist}). For lightning-caused fires that are typically further from roads and settlements, public reporting of small fires is still the initial detection mode in 34% of small lightning fires, with aircraft patrols responsible for 27% of detection while the remainder come from ground patrols and lookout towers.
+
+```{r ABHist-detection-mode, fig.cap="\\label{tab:ABHist-detection-mode}Fire occurrence by detection mode and size at detection for the province of Alberta, 2006-2024. This data is largely representative for populated, managed forests across Canada but not very remote unmanaged forests", message=FALSE, include=FALSE}
+## https://open.alberta.ca/dataset/a221e7a0-4f46-4be7-9c5a-e29de9a3447e/resource/80480824-0c50-456c-9723-f9d4fc136141/download/fp-historical-wildfire-data-2006-2024.xlsx
+
+ABHist <- read.csv("~/DRDC-smoke/fp-historical-wildfire-data-2006-2024.csv")
+
+ABHist <- ABHist %>% mutate(Assess_size_class = case_when(
+ ASSESSMENT_HECTARES < 0.2 ~ "<0.2 ha",
+ ASSESSMENT_HECTARES < 1 ~ "0.2-1 ha",
+ .default = c(">1 ha")
+)) %>% mutate(Cause = case_when(GENERAL_CAUSE == "Lightning" ~ "Lightning",.default = c("Human"))) %>% filter(DETECTION_AGENT_TYPE != "CAM") %>% mutate(Detection_mode = case_match(
+ DETECTION_AGENT_TYPE,
+ "AIR" ~ "aircraft",
+ "GRP" ~ "ground patrol",
+ "LKT" ~ "lookout tower",
+ "UNP" ~ "public report"
+))
+
+ABHist$Assess_size_class <- factor(ABHist$Assess_size_class, levels = c("<0.2 ha", "0.2-1 ha", ">1 ha"))
+
+
+
+#Detection_mode <- ABHist %>% group_by(Cause_LH,Asess_size_class,DETECTION_AGENT_TYPE) %>%
+ #mutate(freq = prop.table(n))
+
+Detection_mode <- ABHist %>% group_by(Cause,Assess_size_class,DETECTION_AGENT_TYPE) %>%
+ summarise(n = n()) %>%
+ mutate(freq = n / sum(n)) %>% mutate('Detection mode' = case_match(
+ DETECTION_AGENT_TYPE,
+ "AIR" ~ "aircraft",
+ "GRP" ~ "ground patrol",
+ "LKT" ~ "lookout tower",
+ "UNP" ~ "public report"
+))# %>% rename("Size at discovery (ha)" = Assess_size_class) %>% select(!DETECTION_AGENT_TYPE) %>% relocate('Detection mode', .after = 'Size at discovery (ha)')
+
+###table is sorta not that information dense....
+#kbl(Detection_mode,align="c",digits=c(0,0,0,0,2)) %>% kable_minimal() %>% column_spec(1:5, width = "1.9cm") %>%
+ # kable_styling(latex_options = "scale_down") %>%
+ #kable_styling(latex_options = "hold_position")
+
+#via: https://stackoverflow.com/questions/37817809/r-ggplot-stacked-bar-chart-with-counts-on-y-axis-but-percentage-as-label
+
+ggplot(ABHist %>% count(Cause,Assess_size_class,Detection_mode) %>%  
+     mutate(pct=n/sum(n),  # Calculate percent within each group
+        ypos = cumsum(n) - 0.5*n), # Calculate label positions
+    aes(Assess_size_class, n, fill=Detection_mode)) +
+ geom_bar(stat="identity") + facet_wrap(vars(Cause)) + xlab("Fire size at first assessment (ha)") + theme(axis.title.y=element_blank()) + theme_bw()
+
+ggsave("ABHist.png",height=8,width=8,units=c("in"))
+
+```
+
+```{r NBAC-Hotspots, message=FALSE, warning=FALSE, include=FALSE}
+
+##goal here is to look at hotspots, the lag between day of fire detection and day of first hotspot, and also % of fires by size class with no hotspots
+
+###load data and size classes 
+NBAC <- read.csv("~/DRDC-smoke/NBAC_2002_2024.csv")
+
+### alternately, read in geopackage ##not run
+#NBAC <- st_read("~/DRDC-smoke/NBAC_2003_2024.gpkg")
+
+NBAC <- NBAC %>% mutate(size_class = case_when(
+ ADJ_HA < 1 ~ "<1 ha",
+ ADJ_HA < 10 ~ "1-10 ha",
+ ADJ_HA < 50 ~ "10-50 ha",
+ ADJ_HA < 100 ~ "50-100 ha",
+ ADJ_HA < 1000 ~ "100-1000 ha",
+ .default = c(">1000 ha")
+)) %>% mutate(Cause = case_when(FIRECAUS == "Natural" ~ "Lightning",.default = c("Human"))) %>% filter(FIRECAUS != "Undetermined") 
+
+NBAC$size_class <- factor(NBAC$size_class, levels = c("<1 ha", "1-10 ha", "10-50 ha","50-100 ha","100-1000 ha",">1000 ha"))
+
+### add a boolean if there's a hotspot start date field
+NBAC <- NBAC %>% mutate(IsHotspot = ifelse(nchar(HS_SDATE)==0,FALSE,TRUE))
+
+### then group by size_class, and count total obs as well as total obs with "HS_SDATE" values
+
+NBAC_summary <- NBAC %>% group_by(Cause,size_class) %>% summarize(TotalFires = n(), HotspotFires = sum(ifelse(IsHotspot==TRUE,1,0)),PctHotspots=HotspotFires/TotalFires)
+
+NBAC_summary2 <- NBAC %>% count(Cause,size_class,IsHotspot)
+
+ggplot(data=NBAC_summary, aes(size_class, PctHotspots)) + geom_bar(stat="identity") + facet_wrap(vars(Cause)) +labs(y="Probability of any polar orbiting hotspots detected",x="Fire size class") +theme(axis.text.x = element_text(angle = 45, hjust = 1)) + theme_bw()
+
+ggsave("Small-fire-detect.png",height=8,width=8,units=c("in"))
+
+### now look at offset (in days) between agency detection and hostpot detection
+
+## convert NBAC into date fields
+NBAC$HS_SDATE <- ymd(NBAC$HS_SDATE)
+NBAC$HS_EDATE <- ymd(NBAC$HS_EDATE)
+NBAC$AG_SDATE <- ymd(NBAC$AG_SDATE)
+NBAC$AG_EDATE <- ymd(NBAC$AG_EDATE)
+
+
+
+NBAC <- NBAC %>% mutate(HS_OFFSET = interval(NBAC$AG_SDATE,NBAC$HS_SDATE) %/%days(1))
+
+#ggplot(data=NBAC %>% filter(ADJ_HA>1), aes(HS_OFFSET,colour=size_class)) + stat_ecdf() + facet_wrap(vars(Cause)) +labs(x="Difference in timing of first polar orbiting satellite detection vs agency detection, rounded to calendar day") + xlim(-10,20)
+
+#optionally output this as csv
+#write.csv(NBAC,"NBAC_offset.csv")
+
+##or output the gpkg:
+#st_write(NBAC,"~/DRDC-smoke/NBAC_2003_2024_offset.gpkg")
+
+ggplot(data=NBAC %>% filter(ADJ_HA>1), aes(HS_OFFSET)) + geom_histogram() + facet_wrap(vars(Cause)) +labs(x="Difference in detection timing (days).") + xlim(-10,20) + theme_bw()
+
+ggsave("Detect-offset.png",height=8,width=8,units=c("in"))
+
+```
+
+Fire detection solely by satellite is not a typical form of fire initial observation in Canada's populated forest and agricultural regions (and is not documented as a primary detection mode in most agency records). A retrospective analysis of the burned area records of @skakun2022 shows that approximately 16% of all fires are observed by polar orbiting satellites prior to discovery and cataloguing by fire management agencies (Figure \ref{fig:Detect-offset}). At the same time, polar orbiting satellites are inefficient at detecting small fires which are often under control within 1--2 days; a majority of fires in Canada less than 100 ha are not detected by polar orbiting satellite (Figure \ref{fig:Small-fire-detect}). In the case of Canada's largely unpopulated tundra, satellite detection is the primary mode of the infrequent lightning-caused fires in the region [@hethcoat2024].
+
+The detection of large, fast moving grass fires using the geostationary GOES satellite's ABI imager as the initial detection mode has been documented in the western US Great Plains [@lindley2016; @lindley2024], where formal fire detection and assessment is limited to largely local volunteers and public reporting. The utility of geostationary fire detection in Canada's agricultural regions that also lie outside of formalized wildfire protection regions is unknown, but likely carries a similar utility.
+
+To date, distributed wireless small-sensor networks of smoke and/or thermal detectors have not been operationally deployed in Canada. Such systems have been proposed in other jurisdictions [e.g. @sonDesignImplementationForestFires2006] with primarily theoretical and simulation evaluation of such systems [e.g. @sernaDistributedForestFire2015]. With the recent availability of commercial vendors making such distributed small sensor systems available to communities or fire management agencies, an field evaluation of smoke-detecting ground wildfire sensors was conducted through the 2023 and 2024 seasons during prescribed burns as well as incidental wildfires at three locations in varying terrain across Canada. All fires consisted of primary grass fuels with some shrubs and sparse trees. Ground-based fire detection records were compared to a proxy for human visual detection (smoke plume height) as well as satellite fire detection records. Data on ignition time, fire weather, and final fire size were used in conjunction with standard fire growth models to estimate fire size and activity at varying detection intervals.
+
+# Methods
+
+## Hourly Fire Weather
+
+The widely used Canadian Fire Weather Index (FWI) System [@vanwagner1987], using only noon-hour weather observations, is optimized to track moisture conditions and fire potential in pine forests or similar ecosystems. Recently, the FWI system has been revised to a new version FWI2025 [@canadianforestservicefiredangergroup2025] in order to incorporate fully hourly weather observations, as is typical in agricultural, aeronautical, air quality, and other weather monitoring applications. FWI2025 contains three grassland variants of the existing FWI System components. First, a Grassland Fuel Moisture Code (GFMC) aims to track the aggregate flammability of live and dead grass fuels in an open setting by incorporating familiar hourly weather observations (temperature, humidity, rainfall, wind) as well as open solar radiation and a user-provided estimate of the relative fraction of cured (dead) vs live grass fuels. GFMC ranges from 0 to 101, with conditions 80 and above corresponding to those able to sustain ignition. Secondly, the Grassland Spread Index (GSI) incorporates the GFMC and the measured wind speed to approximate the potential fire spread rate through grasslands. Lastly, the Grassland Fire Weather Index (GFWI) is an index of fire suppression difficulty. Full details on each metric is given in [@canadianforestservicefiredangergroup2025].
+
+## Ground-based smoke sensors
+
+The present ground wildfire sensor initiative is a collaboration between Defence Research and Development Canada, Centre for Security Science and the United States Department of Homeland Security, Science and Technology Directorate (DHS(S&T)). The DHS(S&T) SCITI program funded a number of industrial partners for the initial development of ground wildfire sensors. After initial testing in laboratories and other evaluations in controlled settings [@usdhsSTWildfireSensor2021], DHS(S&T) has selected two sensor manufacturers to proceed to the second phase of the wildfire sensor development program in which DRDC CSS and stakeholders are taking part. DRDC CSS co-ordinated the participation of a number of Canadian stakeholders: the Canadian Forces Fire Marshall (CFFM), CFB Valcartier, CFB Edmonton Detachment Waiwright, Société de protection des forêts contre le feu (SOPFEU), Ville de Baie-Comeau, Ville de Chibougamaum, and the British Columbia Wildfire Service (BCWS). The Canadian Forest Service (CFS) is provided technical and scientific guidance in this effort. CAF (Canadian Armed Forces) members on large forested bases (such as Valcartier) spend significant amounts of time fighting wildfires on their bases that occur as a result of training exercises. We focus on the deployment on the sensors at CFB Valcartier and Wainwright, as well as a BCWS prescribed burn, during 2023 and 2024. Other deployments did not experience adjacent wildfires or prescribed fires and will not be reported here. Detailed site descriptions and sensor layout maps are presented in the supplementary material.
+
+Prescribed burns are ideal for testing sensor effectiveness with a known start location, time, and final burned area. In 2023, twenty sensors were deployed in CFB Valcartier to collect data from the prescribed burns scheduled before the start of the 2023 fire season. In 2024, ten of the twenty sensors remained in Valcartier with the other ten relocated to CFB Wainwright to collect from two different prescribed burn schedules. Using the known ignition location and time combined with total burned area allows for characterization of the fire for comparison with other methods of detection.
+
+Ground sensors detect particulate matter (PM) and volatile organic compound (VOC) concentrations, and report data every 5 minutes. Sensors are powered by solar panels and communicate via LTE wireless protocol. Best deployed at a height of greater than 3 m (trees or utility poles). Warnings (first detection with a lower threshold) or Alerts (higher threshold) are sent out by the sensors if these concentrations pass a certain threshold determined by vendor-provided algorithms; warnings are approximated by PM~2.5~ observations exceeding 30 ug/m^3^ and alerts as observations exceeding 200 ug/m^3^. A web portal allowed stakeholders to monitor sensor status and receive text notifications for the wildfire ignitions Warnings and Alerts. The focus of this work is on the applied utility of the sensor network for small and localized smoke events; the precision or accuracy of lower-cost particulate concentration measurements has been extensively studied elsewhere [@holder2020]. The analyses contained herein are not meant to be an evaluation of the specifications and performance of the individual ground sensors. The main purpose of conducting these analyses is to provide advice to provincial/territorial wildfire suppression managers on what the most effective utilization of such ground sensors is operationally – either in conjunction with other detection methods, or on their own; and before, during and after a suppression operation.
+
+## Other detection modes
+
+Ground-based smoke sensor observations were compared to other more common detection modes, namely (1) visual detection (both public and fire agency) as well as (2) polar orbiting satellites for detection of smaller and smouldering fires, and (3) geostationary fire detection for large and fast-growing fires. Visual detection potential was assessed using the modelled fire growth from the Canadian Forest Fire Behaviour Prediction System [@forestrycanadafiredangerratinggroup1992], coupled to the widely used plume rise model from Briggs that can be applied to small to medium sized fires [@tory2018]. The relationship between plume rise height, diameter, and detection distance is not robustly understood; historical records indicate visual detection of forest fires \<1 ha is possible upwards of 25 km given clear line of sight and favourable atmospheric conditions (see Appendix F). Fire radiative power over time as a function of fire growth was also estimated for each fire using the same fire growth models from [@forestrycanadafiredangerratinggroup1992] as were used in plume rise estimates (see Appendix F). Fire radiative power estimate over time were made assuming 17% of instantaneous total area-wise fire intensity is released as infrared radiation, following field-scale observations in similar fuels by @johnston2017.
+
+Satellite detection records (both polar orbiting and geostationary) for each individual fire event were obtained from the NASA FIRMS archive [@hewson2024]. A qualitative assessment of cloud cover for daytime periods was accessed via the NASA Worldview service for the satellite overpasses during fire events (including those without satellite detection).
+
+```{r load-process-VC-data-DO-NOT-RUN, eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+
+# C:\Users\danthomp\OneDrive - NRCan RNCan\DRDC Smoke Sensors\WildfireSensorDataAnalysis\WildfireSensorDataAnalysis\Output\VCMay2023\VC
+
+file_path=c("C:/Users/danthomp/OneDrive - NRCan RNCan/DRDC Smoke Sensors/WildfireSensorDataAnalysis/WildfireSensorDataAnalysis/Output/VCMay2023/VC/")
+
+Alerts <- list.files(path=file_path, "Alerts*.csv$", recursive = T, full.names = T)
+
+for(i in seq(1:length(Alerts)))
+{
+  tmp <- read.csv(Alerts[i],header=FALSE)
+  SensorID <- str_sub(Alerts[i],start=135,end=139)
+  tmp <- cbind(SensorID,tmp)
+  if(i==1) all_alerts <- tmp else all_alerts <- rbind(tmp,all_alerts)
+}
+
+colnames(all_alerts)[2] <- c("Type")
+colnames(all_alerts)[3] <- c("Start")
+colnames(all_alerts)[4] <- c("End")
+colnames(all_alerts)[5] <- c("Duration")
+
+write.csv(all_alerts,"VC_all_alerts.csv")
+
+
+Data <- list.files(path=file_path, "Data*.csv$", recursive = T, full.names = T)
+
+
+
+for(i in seq(1:length(Data)))
+{
+  tmp <- read.csv(Data[i],header=FALSE)
+  SensorID <- str_sub(Data[i],start=135,end=139)
+  tmp <- cbind(SensorID,tmp)
+  if(i==1) all_data <- tmp else all_data <- rbind(tmp,all_data)
+}
+
+colnames(all_data) <- c("SensorID","TimeEDT","UnitTime","T","RH","P","PM1P0","PM2P5")
+
+write.csv(all_data,"VC_all_data.csv")
+
+```
+
+```{r load-data, message=FALSE, warning=FALSE, include=FALSE}
+setwd("~/DRDC-smoke")
+
+##load tabular summary (as square dataframe, can make it long here)
+
+
+## load ACIS data https://acis.alberta.ca/acis/weather-data-viewer.jsp for nearby Kinsella Research Station with both 10-m open wind speeds as well as hourly averaged solar radiation
+#https://acis.alberta.ca/acis/app/weather-station/7290/details#metadata
+
+ACISHourlyData <- read_csv("~/DRDC-smoke/ACISHourlyData-20240401-20240430-PID081045983.csv",col_types = cols(time = col_character()))
+
+###set units here for weather data
+#units(ACISHourlyData$temp) <- "C"
+#units(ACISHourlyData$rh) <- "%"
+#units(ACISHourlyData$prec) <- "mm"
+#units(ACISHourlyData$ws) <- "km/h"
+
+
+### convert time column into proper date object via lubridate
+ACISHourlyData$time <- ymd_hm(ACISHourlyData$time,tz="Etc/GMT+7") ## ACIS Data is in local standard time
+ACISHourlyData$timeMST <- with_tz(ACISHourlyData$time,tz="Etc/GMT+7")
+
+###provide the lat/long of the station
+ACISHourlyData$lat <- 53.00
+ACISHourlyData$long <- -111.52
+
+tz_loc <- tz_lookup_coords(ACISHourlyData$lat[1], ACISHourlyData$long[1], method = "fast")
+
+ACISHourlyData$tz_loc <- tz_loc
+utc <- tz_offset("2007-01-01", tz_loc)[[5]]
+
+ACISHourlyData$utc <- utc
+
+### ACIS data is recorded in ISO/WMO kW/m2, while GFMC function in cffdrs require kW/m2:
+ACISHourlyData <- ACISHourlyData %>% mutate(isol = isol/1000)
+#units(ACISHourlyData$isol) <- "kW/m^2"
+
+
+##read in the QC airport data with visibility and hourly precip:
+VC2023HourlyData <- read_csv("~/DRDC-smoke/en_climate_hourly_QC_7016293_05-2023_P1H.csv",col_types = cols(time = col_character()))
+VC2023HourlyData$time <- ymd_hm(VC2023HourlyData$time,tz="Etc/GMT+5") ##ECCC data is always LST
+
+RC2024HourlyData <- read_csv("~/DRDC-smoke/BCWS_394_Rock_Cr_hourly_gapfilled.csv",col_types = cols(time = col_character()))
+RC2024HourlyData$time <- ymd_hms(RC2024HourlyData$time,tz="Etc/GMT+8") ##assuming PST 
+```
+
+```{r calc-GFMC-hourly, message=FALSE, warning=FALSE, include=FALSE}
+
+setwd("~/DRDC-smoke/")
+### these need to run in the same dir as the .rproj:
+source("NG_FWI.r")
+source("util.r")
+source("daily_summaries.R")
+
+
+###hFWI needs "mon", "day", "hr" fields:
+ACISHourlyData$mon <- month(ACISHourlyData$time)
+ACISHourlyData$day <- day(ACISHourlyData$time)
+ACISHourlyData$hr <- hour(ACISHourlyData$time)
+ACISHourlyData$yr <- year(ACISHourlyData$time)
+
+##run the FWI2025 hourly function: 
+ACISHourlyData <- hFWI(ACISHourlyData, utc)
+
+hFWI_daily <- generate_daily_summaries(ACISHourlyData)
+
+ACISHourlyWx <- ACISHourlyData %>% select(`station name`:date) %>% filter(hr == 13)
+
+ACISHourlyFWI_1987_daily <- fwi(ACISHourlyWx)
+
+Compare_FWI2025_1987 <- cbind(ACISHourlyFWI_1987_daily,hFWI_daily)
+
+#GFMC <- gfmc(ACISHourlyData,out="GFMCandMC")[1]
+#MC_grass <- gfmc(ACISHourlyData,out="GFMCandMC")[2]
+#colnames(MC_grass)[1] <- c("MC_grass")
+
+#ACISHourlyData <- bind_cols(ACISHourlyData, GFMC,MC_grass) 
+
+##importantly, since the FBP is running FBP92, sub in the gmfc for FFMC, so that the FBP is running off the more realistic grass-based codes
+
+ACISHourlyData <- ACISHourlyData %>% mutate(FFMC_FBP92 = ffmc) %>% mutate(FFMC = gfmc)
+
+```
+
+```{r hourly-FBP, message=FALSE, warning=FALSE, include=FALSE}
+### 
+fueltype <- rep("O-1a", times=nrow(ACISHourlyData))
+
+ACISHourlyData <- cbind(ACISHourlyData, fueltype) 
+
+fueltype <- rep("O-1a", times=nrow(VC2023HourlyData))
+VC2023HourlyData <- cbind(VC2023HourlyData, fueltype) 
+
+
+fueltype <- rep("O-1b", times=nrow(RC2024HourlyData))
+RC2024HourlyData <- cbind(RC2024HourlyData, fueltype) 
+
+
+
+
+### VC Data pre-processing
+##there's a few near-zero ws values that mess up the fwi function, so increase them to 1.0 km/h
+VC2023HourlyData$ws[VC2023HourlyData$ws<1] <- 1
+VC2023HourlyData$ws[is.na(VC2023HourlyData$ws)] <- 1
+VC2023HourlyData$rh[is.na(VC2023HourlyData$rh)] <- 50
+VC2023HourlyData$temp[is.na(VC2023HourlyData$temp)] <- 15
+VC2023HourlyData$prec[is.na(VC2023HourlyData$prec)] <- 0
+
+VC2023HourlyData$lat <- 46.9
+VC2023HourlyData$long <- -71.5
+
+tz_loc <- tz_lookup_coords(VC2023HourlyData$lat[1], VC2023HourlyData$long[1], method = "fast")
+
+VC2023HourlyData$tz_loc <- tz_loc
+utc <- tz_offset("2007-01-01", tz_loc)[[5]]
+
+
+VC2023HourlyData$mon <- month(VC2023HourlyData$time)
+VC2023HourlyData$day <- day(VC2023HourlyData$time)
+VC2023HourlyData$hr <- hour(VC2023HourlyData$time)
+VC2023HourlyData$yr <- year(VC2023HourlyData$time)
+
+
+VC2023HourlyFWI <- hFWI(VC2023HourlyData,utc)
+
+VC2023HourlyFWI <- VC2023HourlyFWI %>% mutate(FFMC_FBP92 = ffmc) %>% mutate(FFMC = gfmc) %>% mutate(ffmc = gfmc)
+
+## RC Data pre-processing
+
+
+##there's a few near-zero ws values that mess up the fwi function, so increase them to 1.0 km/h
+RC2024HourlyData$ws[RC2024HourlyData$ws<1] <- 1
+RC2024HourlyData$ws[is.na(RC2024HourlyData$ws)] <- 1
+RC2024HourlyData$wd[is.na(RC2024HourlyData$wd)] <- 0
+RC2024HourlyData$rh[is.na(RC2024HourlyData$rh)] <- 50
+RC2024HourlyData$temp[is.na(RC2024HourlyData$temp)] <- 15
+RC2024HourlyData$prec[is.na(RC2024HourlyData$prec)] <- 0
+
+RC2024HourlyData$lat <- 49.054
+RC2024HourlyData$long <- -118.98133
+
+
+tz_loc <- tz_lookup_coords(RC2024HourlyData$lat[1], RC2024HourlyData$long[1], method = "fast")
+
+RC2024HourlyData$tz_loc <- tz_loc
+utc <- tz_offset("2007-01-01", tz_loc)[[5]]
+
+
+RC2024HourlyData$mon <- month(RC2024HourlyData$time)
+RC2024HourlyData$day <- day(RC2024HourlyData$time)
+RC2024HourlyData$hr <- hour(RC2024HourlyData$time)
+RC2024HourlyData$yr <- year(RC2024HourlyData$time)
+RC2024HourlyData$percent_cured <- 100
+
+
+RC2024HourlyFWI <- hFWI(RC2024HourlyData,utc)
+
+RC2024HourlyFWI <- RC2024HourlyFWI %>% mutate(FFMC_FBP92 = ffmc) %>% mutate(FFMC = gfmc) %>% mutate(ffmc = gfmc)
+
+
+
+
+####### calculate hourly FBP
+
+HourlyFBP <- fbp(ACISHourlyData,output="all")
+#colnames(HourlyFBP)[13] <- c("FFMCfbp")
+
+##and also do that for the 2023 VC data:
+HourlyFBP_VC <- fbp(VC2023HourlyFWI,output="all")
+#colnames(HourlyFBP_VC)[13] <- c("FFMCfbp")
+
+HourlyFBP_RC <- fbp(RC2024HourlyFWI,output="all")
+
+
+
+### need to convert the ID field to numeric from character for time series, then sort before cbind
+HourlyFBP <- HourlyFBP %>% arrange(ID)
+HourlyFBP_VC <- HourlyFBP_VC %>% arrange(ID)
+HourlyFBP_RC <- HourlyFBP_RC %>% arrange(ID)
+
+
+
+
+#HourlyFBP$ID <- as.numeric(HourlyFBP$ID) %>% arrange(ID)
+
+
+###!!! Check the order at which this is produced, is ID numeric?
+
+ACISHourlyData <- ACISHourlyData %>% select(!FFMC)
+VC2023HourlyFWI <- VC2023HourlyFWI %>% select(!FFMC)
+RC2024HourlyFWI <- RC2024HourlyFWI %>% select(!FFMC)
+
+HourlyFwiFbp <- cbind(ACISHourlyData,HourlyFBP)
+HourlyFwiFbp_VC <- cbind(VC2023HourlyFWI,HourlyFBP_VC)
+HourlyFwiFbp_RC <- cbind(RC2024HourlyFWI,HourlyFBP_RC) 
+
+```
+
+```{r plot-monthly-FWI-FBP-w-ign-WR, message=FALSE, warning=FALSE, include=FALSE}
+
+###load the Wainwright data:
+
+WainwrightApr2024 <- read_csv("~/DRDC-smoke/WainwrightApr2024.csv", 
+col_types = cols(ReportedIgnTime = col_character(), 
+FirstWarningTime = col_character(), 
+FirstAlertTime = col_character(), 
+RoundedIgnTime = col_character(), 
+FirstVIIRStime = col_character(), 
+FirstVIIRSfrp = col_double(), FirstGOEStime = col_character(), 
+FirstGOESfrp = col_double()))
+
+WainwrightApr2024$ReportedIgnTime <- ymd_hm(WainwrightApr2024$ReportedIgnTime,tz="Etc/GMT+7")
+WainwrightApr2024$RoundedIgnTime <- ymd_hm(WainwrightApr2024$RoundedIgnTime,tz="Etc/GMT+7")
+
+WainwrightApr2024 <- WainwrightApr2024 %>% mutate(IgnUTC = with_tz(ReportedIgnTime,tz="UTC")) %>% mutate(IgnDOY = yday(IgnUTC))
+
+#units(WainwrightApr2024$ReportedFinalArea) <- "ha"
+
+###need to append the ignition weather to the fire summary table
+
+HourlyFWISummary <- HourlyFwiFbp %>% select(time,temp,rh,ws,wd,solrad,gfmc,gsi,gfwi)
+
+
+WainwrightApr2024 <- WainwrightApr2024 %>% left_join(HourlyFWISummary , by=join_by(RoundedIgnTime==time)) 
+
+##make a subset of columns just for later on output in the main document:
+WainwrightApr2024_wx_summary <- WainwrightApr2024 %>% select(FireName,ReportedIgnTime,LAT,LONG,temp,rh,ws,wd,solrad,gfmc,gsi,gfwi)
+
+GFWI_breaks <- c(5,15,23,31)
+date_min <- as_datetime(c("2024-04-03 00:00:00"))
+date_max <- as_datetime(c("2024-04-25 22:00:00"))
+
+##little time series plot here with maybe GFMC and then predicted ROS or something over the month, then ignition points as labelled dots (diff colour for PB vs wildfire)
+
+#p1 <- ggplot(HourlyFwiFbp, aes(time,MC_grass)) + geom_line() + xlim(as_datetime(c("2024-04-03 00:00:00","2024-04-25 22:00:00"))) + geom_point(data=WainwrightApr2024,aes(ReportedIgnTime,MC_grass)) + ylab("Grass moisture content (%)") + xlab("Date 2024")
+
+p2 <- ggplot(HourlyFwiFbp, aes(time,gfmc)) + geom_line(na.rm=TRUE) + scale_x_datetime(date_breaks = "1 week",date_minor_breaks = "1 day",limits=as_datetime(c("2024-04-03 00:00:00","2024-04-25 22:00:00")),expand=c(0,0)) + geom_point(data=WainwrightApr2024,aes(ReportedIgnTime,gfmc,colour=FireType,size=log10(ReportedFinalArea)),alpha=0.4) + ylab("GFMC") +annotate("rect", xmin = date_min, xmax = date_max, ymin = 0, ymax = 75, fill="blue", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 75.0, ymax = 81, fill="green", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 81, ymax = 87, fill="yellow", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 87, ymax = 92, fill="orange", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 92, ymax = Inf, fill="red", alpha = .2) + scale_y_continuous(expand=c(0,5),breaks=c(0,50,60,70,75,80,85,90,95,99)) + theme(axis.title.x=element_blank()) + coord_trans(y = scales::transform_exp(1.04)) + theme_bw() + theme(legend.position = "none")
+
+p3 <- ggplot(HourlyFwiFbp, aes(time,gsi)) + geom_line(na.rm=TRUE) + scale_x_datetime(date_breaks = "1 week",date_minor_breaks = "1 day",limits=as_datetime(c("2024-04-03 00:00:00","2024-04-25 22:00:00")),expand=c(0,0)) + geom_point(data=WainwrightApr2024,aes(ReportedIgnTime,gsi,colour=FireType,size=log10(ReportedFinalArea)),alpha=0.4) + ylab("GSI") +annotate("rect", xmin = date_min, xmax = date_max, ymin = 0, ymax = 5, fill="blue", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 5.0, ymax = 20, fill="green", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 20, ymax = 50, fill="yellow", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 50, ymax = 75, fill="orange", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 75, ymax = Inf, fill="red", alpha = .2)+ scale_y_continuous(expand=c(0,5)) + theme(axis.title.x=element_blank()) + theme(legend.position = "none") + geom_label_repel(data=WainwrightApr2024,min.segment.length = 0, seed = 42, box.padding = 0.5,aes(ReportedIgnTime,gsi,colour=FireType,label=FireName)) + theme_bw()
+
+#https://stackoverflow.com/questions/52842492/how-to-add-a-text-annotations-to-a-time-series-ggplot
+##would like to draw some nice boxes here
+p4 <- ggplot(HourlyFwiFbp, aes(time,gfwi)) + geom_line(na.rm=TRUE) + scale_x_datetime(date_breaks = "1 week",date_minor_breaks = "1 day",limits=as_datetime(c("2024-04-03 00:00:00","2024-04-25 22:00:00")),expand=c(0,0)) + geom_point(data=WainwrightApr2024,aes(ReportedIgnTime,gfwi,colour=FireType,size=log10(ReportedFinalArea)),alpha=0.4) + ylab("GFWI") + xlab("Date 2024") + annotate("rect", xmin = date_min, xmax = date_max, ymin = 0, ymax = 5.0, fill="blue", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 5.0, ymax = 15, fill="green", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 15, ymax = 23, fill="yellow", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 23, ymax = 31, fill="orange", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 31, ymax = Inf, fill="red", alpha = .2)+ scale_y_continuous(expand=c(0,5)) + theme(axis.title.x=element_blank())  + theme_bw() + theme(legend.position = "none")
+
+
+
+
+### stitch these together using patchwork:
+p2/p3/p4
+
+#######
+###!!! do as a panel plot with Meteogram, the GFMC, GISI, then GFWI !!!!
+#######
+
+
+#+ geom_text(data=MwThresholds,aes(hr*60,MW,label = FireName))
+
+##can use Jasper meteograms here
+
+# from https://stackoverflow.com/questions/18103823/ggplot2-wind-time-series-with-arrows-vectors
+#### need to pass along wd into FBP to get RAZ and plot that
+###+geom_segment(data = wind,
+         #size = 3,
+         #aes(x = datetime,
+        #   xend = lead(HourlyFwiFbp$time),
+        #   y = 2,
+        #   yend = velocity),
+        # arrow = arrow(length = unit(0.5, "cm"))) +
+  #theme()
+
+#ggsave("~/DRDC-smoke/WR-FWI.png",height=8,width=8,units=c("in"))
+ggsave("WR-FWI.png",height=8,width=8,units=c("in"))
+
+
+```
+
+```{r more-plots-GFWI-vs-FFMC-DO-NOT-RUN, eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+
+p10 <- ggplot(HourlyFwiFbp, aes(time,gfmc)) + geom_line(na.rm=TRUE) + scale_x_datetime(date_breaks = "1 week",date_minor_breaks = "1 day",limits=as_datetime(c("2024-04-03 00:00:00","2024-04-25 22:00:00")),expand=c(0,0)) +  ylab("GFMC") +annotate("rect", xmin = date_min, xmax = date_max, ymin = 0, ymax = 75, fill="blue", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 75.0, ymax = 81, fill="green", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 81, ymax = 87, fill="yellow", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 87, ymax = 92, fill="orange", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 92, ymax = Inf, fill="red", alpha = .2) + scale_y_continuous(expand=c(0,5),breaks=c(0,50,60,70,75,80,85,90,95,99)) + theme(axis.title.x=element_blank()) + coord_trans(y = scales::transform_exp(1.04))  + theme_bw()
+
+p11 <- ggplot(HourlyFwiFbp, aes(time,ffmc)) + geom_line(na.rm=TRUE) + scale_x_datetime(date_breaks = "1 week",date_minor_breaks = "1 day",limits=as_datetime(c("2024-04-03 00:00:00","2024-04-25 22:00:00")),expand=c(0,0)) +  ylab("FFMC") +annotate("rect", xmin = date_min, xmax = date_max, ymin = 0, ymax = 75, fill="blue", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 75.0, ymax = 81, fill="green", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 81, ymax = 87, fill="yellow", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 87, ymax = 92, fill="orange", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 92, ymax = Inf, fill="red", alpha = .2) + scale_y_continuous(expand=c(0,5),breaks=c(0,50,60,70,75,80,85,90,95,99)) + theme(axis.title.x=element_blank()) + coord_trans(y = scales::transform_exp(1.04)) + theme_bw()
+
+p10/p11
+
+
+p12 <- ggplot(HourlyFwiFbp, aes(time,gsi)) + geom_line(na.rm=TRUE) + scale_x_datetime(date_breaks = "1 week",date_minor_breaks = "1 day",limits=as_datetime(c("2024-04-03 00:00:00","2024-04-25 22:00:00")),expand=c(0,0)) + ylab("GSI") +annotate("rect", xmin = date_min, xmax = date_max, ymin = 0, ymax = 5, fill="blue", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 5.0, ymax = 20, fill="green", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 20, ymax = 50, fill="yellow", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 50, ymax = 75, fill="orange", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 75, ymax = Inf, fill="red", alpha = .2)+ scale_y_continuous(expand=c(0,5)) + theme(axis.title.x=element_blank()) + theme(legend.position = "none") + theme_bw()
+
+
+p13 <- ggplot(HourlyFwiFbp, aes(time,isi)) + geom_line(na.rm=TRUE) + scale_x_datetime(date_breaks = "1 week",date_minor_breaks = "1 day",limits=as_datetime(c("2024-04-03 00:00:00","2024-04-25 22:00:00")),expand=c(0,0))  + ylab("ISI") + theme(legend.position = "none") + theme_bw()
+
+
+p12/p13
+
+
+ggplot(Compare_FWI2025_1987,aes(FFMC,as.numeric(ffmc)))+geom_point() +geom_abline(slope=1,linetype="dotted") + xlab("FWI1987 FFMC") + ylab("FWI2025 maximum of hourly FFMC") + xlim(65,95) + ylim(65,95) + theme_bw()
+
+ggplot(Compare_FWI2025_1987,aes(ISI,as.numeric(isi)))+geom_point() +geom_abline(slope=1,linetype="dotted") + xlab("FWI1987 ISI") + ylab("FWI2025 maximum of hourly ISI")+ xlim(0,45) + ylim(0,45) + theme_bw()
+
+ggplot(Compare_FWI2025_1987,aes(FWI,as.numeric(fwi)))+geom_point() +geom_abline(slope=1,linetype="dotted") + xlab("FWI1987 FWI") + ylab("FWI2025 maximum of hourly FWI")+ xlim(0,45) + ylim(0,45) + theme_bw()
+
+
+```
+
+```{r plot-monthly-FWI-VC-2023, fig.cap="As above, fig.height=4, fig.width=6, message=FALSE, warning=FALSE, but for the Valcartier deployment in May 2023.", echo=FALSE, include=FALSE}
+
+###load the Valcartier data:
+
+VC2023FireReports <- read_csv("~/DRDC-smoke/Valcartier2023.csv", 
+col_types = cols(ReportedIgnTime = col_character(), 
+FirstWarningTime = col_character(), 
+FirstAlertTime = col_character(), 
+RoundedIgnTime = col_character(), 
+FirstVIIRStime = col_character(), 
+FirstVIIRSfrp = col_double(), FirstGOEStime = col_character(), 
+FirstGOESfrp = col_double()))
+
+VC2023FireReports$ReportedIgnTime <- ymd_hm(VC2023FireReports$ReportedIgnTime,tz="Etc/GMT+5")
+VC2023FireReports$RoundedIgnTime <- ymd_hm(VC2023FireReports$RoundedIgnTime,tz="Etc/GMT+5")
+
+VC2023FireReports <- VC2023FireReports %>% mutate(IgnUTC = with_tz(ReportedIgnTime,tz="UTC")) %>% mutate(IgnDOY = yday(IgnUTC))
+
+HourlyFWISummary_VC <- VC2023HourlyFWI %>% select(time,temp,rh,ws,wd,solrad,gfmc,gsi,gfwi)
+
+VC2023FireReports <- VC2023FireReports %>% left_join(HourlyFWISummary_VC , by=join_by(RoundedIgnTime==time)) 
+
+##make a subset of columns just for later on output in the main document:
+VC2023_wx_summary <- VC2023FireReports %>% select(FireName,ReportedIgnTime,LAT,LONG,temp,rh,ws,wd,solrad,gfmc,gsi,gfwi)
+
+GFWI_breaks <- c(5,15,23,31)
+date_min <- as_datetime(c("2023-05-11 00:00:00"))
+date_max <- as_datetime(c("2023-05-30 22:00:00"))
+
+
+
+p2 <- ggplot(HourlyFwiFbp_VC, aes(time,gfmc)) + geom_line() + scale_x_datetime(date_breaks = "1 week",date_minor_breaks = "1 day",limits=as_datetime(c("2023-05-11 00:00:00","2023-05-30 22:00:00")),expand=c(0,0)) + geom_point(data=VC2023FireReports,aes(ReportedIgnTime,gfmc,colour=FireType,size=log10(ReportedFinalArea)),alpha=0.4) + ylab("GFMC") +annotate("rect", xmin = date_min, xmax = date_max, ymin = 0, ymax = 75, fill="blue", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 75.0, ymax = 81, fill="green", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 81, ymax = 87, fill="yellow", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 87, ymax = 92, fill="orange", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 92, ymax = Inf, fill="red", alpha = .2) + scale_y_continuous(expand=c(0,5),breaks=c(0,50,60,70,75,80,85,90,95,99)) + theme(axis.title.x=element_blank()) + coord_trans(y = scales::transform_exp(1.04)) + theme(legend.position = "none")
+
+p3 <- ggplot(HourlyFwiFbp_VC, aes(time,gsi)) + geom_line() + scale_x_datetime(date_breaks = "1 week",date_minor_breaks = "1 day",limits=as_datetime(c("2023-05-11 00:00:00","2023-05-30 22:00:00")),expand=c(0,0)) + geom_point(data=VC2023FireReports,aes(ReportedIgnTime,gsi,colour=FireType,size=log10(ReportedFinalArea)),alpha=0.4) + ylab("GSI") +annotate("rect", xmin = date_min, xmax = date_max, ymin = 0, ymax = 5, fill="blue", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 5.0, ymax = 20, fill="green", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 20, ymax = 50, fill="yellow", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 50, ymax = 75, fill="orange", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 75, ymax = Inf, fill="red", alpha = .2)+ scale_y_continuous(expand=c(0,5)) + theme(axis.title.x=element_blank()) + theme(legend.position = "none") + geom_label_repel(data=VC2023FireReports,min.segment.length = 0, seed = 42, box.padding = 0.5,aes(ReportedIgnTime,gsi,colour=FireType,label=FireName))
+
+#https://stackoverflow.com/questions/52842492/how-to-add-a-text-annotations-to-a-time-series-ggplot
+##would like to draw some nice boxes here
+p4 <- ggplot(HourlyFwiFbp_VC, aes(time,gfwi)) + geom_line() + scale_x_datetime(date_breaks = "1 week",date_minor_breaks = "1 day",limits=as_datetime(c("2023-05-11 00:00:00","2023-05-30 22:00:00")),expand=c(0,0)) + geom_point(data=VC2023FireReports,aes(ReportedIgnTime,gfwi,colour=FireType,size=log10(ReportedFinalArea)),alpha=0.4) + ylab("GFWI") + xlab("Date 2023") + annotate("rect", xmin = date_min, xmax = date_max, ymin = 0, ymax = 5.0, fill="blue", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 5.0, ymax = 15, fill="green", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 15, ymax = 23, fill="yellow", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 23, ymax = 31, fill="orange", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 31, ymax = Inf, fill="red", alpha = .2)+ scale_y_continuous(expand=c(0,5)) + theme(axis.title.x=element_blank()) + theme(legend.position = "none")
+
+
+
+
+### stitch these together using patchwork:
+p2/p3/p4
+
+#ggsave("~/DRDC-smoke/VC-FWI.png",height=8,width=8,units=c("in"))
+ggsave("VC-FWI.png",height=8,width=8,units=c("in"))
+
+```
+
+```{r plot-monthly-FWI-RC-2024, fig.cap="As above, fig.height=4, fig.width=6, message=FALSE, warning=FALSE, but for the Rock Creek deployment in September 2024.", echo=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+
+###load the Rock Creek data:
+
+RC2024FireReports <- read_csv("~/DRDC-smoke/RC2024.csv", 
+col_types = cols(ReportedIgnTime = col_character(), 
+FirstWarningTime = col_character(), 
+FirstAlertTime = col_character(), 
+RoundedIgnTime = col_character(), 
+FirstVIIRStime = col_character(), 
+FirstVIIRSfrp = col_double(), FirstGOEStime = col_character(), 
+FirstGOESfrp = col_double(),FirstObsFRP=col_double()))
+
+RC2024FireReports$ReportedIgnTime <- ymd_hm(RC2024FireReports$ReportedIgnTime,tz="Etc/GMT+7")
+RC2024FireReports$RoundedIgnTime <- ymd_hm(RC2024FireReports$RoundedIgnTime,tz="Etc/GMT+7")
+
+RC2024FireReports <- RC2024FireReports %>% mutate(IgnUTC = with_tz(ReportedIgnTime,tz="UTC")) %>% mutate(IgnDOY = yday(IgnUTC))
+
+HourlyFWISummary_RC <- RC2024HourlyFWI %>% select(time,temp,rh,ws,wd,solrad,gfmc,gsi,gfwi)
+
+RC2024FireReports <- RC2024FireReports %>% left_join(HourlyFWISummary_RC , by=join_by(RoundedIgnTime==time)) 
+
+##make a subset of columns just for later on output in the main document:
+RC2024_wx_summary <- RC2024FireReports %>% select(FireName,ReportedIgnTime,LAT,LONG,temp,rh,ws,wd,solrad,gfmc,gsi,gfwi)
+
+GFWI_breaks <- c(5,15,23,31)
+date_min <- as_datetime(c("2024-09-11 00:00:00"))
+date_max <- as_datetime(c("2024-09-19 22:00:00"))
+
+p2 <- ggplot(HourlyFwiFbp_RC, aes(time,gfmc)) + geom_line() + scale_x_datetime(date_breaks = "2 day",date_minor_breaks = "1 day",limits=as_datetime(c("2024-09-11 00:00:00","2024-09-19 22:00:00")),expand=c(0,0)) + geom_point(data=RC2024FireReports,aes(ReportedIgnTime,gfmc,colour=FireType,size=log10(ReportedFinalArea)),alpha=0.4) + ylab("GFMC") +annotate("rect", xmin = date_min, xmax = date_max, ymin = 0, ymax = 75, fill="blue", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 75.0, ymax = 81, fill="green", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 81, ymax = 87, fill="yellow", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 87, ymax = 92, fill="orange", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 92, ymax = Inf, fill="red", alpha = .2) + scale_y_continuous(expand=c(0,5),breaks=c(0,50,60,70,75,80,85,90,95,99)) + theme(axis.title.x=element_blank()) + coord_trans(y = scales::transform_exp(1.04)) + theme(legend.position = "none")
+
+p3 <- ggplot(HourlyFwiFbp_RC, aes(time,gsi)) + geom_line() + scale_x_datetime(date_breaks = "2 day",date_minor_breaks = "1 day",limits=as_datetime(c("2024-09-11 00:00:00","2024-09-19 22:00:00")),expand=c(0,0)) + geom_point(data=RC2024FireReports,aes(ReportedIgnTime,gsi,colour=FireType,size=log10(ReportedFinalArea)),alpha=0.4) + ylab("GSI") +annotate("rect", xmin = date_min, xmax = date_max, ymin = 0, ymax = 5, fill="blue", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 5.0, ymax = 20, fill="green", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 20, ymax = 50, fill="yellow", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 50, ymax = 75, fill="orange", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 75, ymax = Inf, fill="red", alpha = .2)+ scale_y_continuous(expand=c(0,5)) + theme(axis.title.x=element_blank()) + theme(legend.position = "none") + geom_label_repel(data=RC2024FireReports,min.segment.length = 0, seed = 42, box.padding = 0.5,aes(ReportedIgnTime,gsi,colour=FireType,label=FireName))
+
+#https://stackoverflow.com/questions/52842492/how-to-add-a-text-annotations-to-a-time-series-ggplot
+##would like to draw some nice boxes here
+p4 <- ggplot(HourlyFwiFbp_RC, aes(time,gfwi)) + geom_line() + scale_x_datetime(date_breaks = "2 day",date_minor_breaks = "1 day",limits=as_datetime(c("2024-09-11 00:00:00","2024-09-19 22:00:00")),expand=c(0,0)) + geom_point(data=RC2024FireReports,aes(ReportedIgnTime,gfwi,colour=FireType,size=log10(ReportedFinalArea)),alpha=0.4) + ylab("GFWI") + xlab("Date 2024") + annotate("rect", xmin = date_min, xmax = date_max, ymin = 0, ymax = 5.0, fill="blue", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 5.0, ymax = 15, fill="green", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 15, ymax = 23, fill="yellow", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 23, ymax = 31, fill="orange", alpha = .2) + annotate("rect", xmin = date_min, xmax = date_max, ymin = 31, ymax = Inf, fill="red", alpha = .2)+ scale_y_continuous(expand=c(0,5)) + theme(axis.title.x=element_blank()) + theme(legend.position = "none")
+
+
+
+
+### stitch these together using patchwork:
+p2/p3/p4
+
+#ggsave("~/DRDC-smoke/RC-FWI.png",height=8,width=8,units=c("in"))
+ggsave("RC-FWI.png",height=8,width=8,units=c("in"))
+```
+
+```{r load-fire-records-run-FBP-WR, message=FALSE, warning=FALSE, include=FALSE}
+
+### do we have any need for the Wainwright town hall Purple Air record? https://community.purpleair.com/t/purpleair-data-download-tool/3787
+
+
+####load the fire records, determine which are line ignitions? Maybe re-run the FBP script just for those hours?
+WainwrightApr2024 <- read_csv("~/DRDC-smoke/WainwrightApr2024.csv", 
+col_types = cols(ReportedIgnTime = col_character(), 
+FirstWarningTime = col_character(), 
+FirstAlertTime = col_character(), 
+RoundedIgnTime = col_character(), 
+FirstVIIRStime = col_character(), 
+FirstVIIRSfrp = col_double(), FirstGOEStime = col_character(), 
+FirstGOESfrp = col_double(),FirstObsFRP = col_double()))
+
+WainwrightApr2024$ReportedIgnTime <- ymd_hm(WainwrightApr2024$ReportedIgnTime,tz="Etc/GMT+6") ## CFB Wainwright fire reports in MDT as well.
+WainwrightApr2024$RoundedIgnTime <- ymd_hm(WainwrightApr2024$RoundedIgnTime,tz="Etc/GMT+6")
+WainwrightApr2024$FirstWarningTime <- ymd_hm(WainwrightApr2024$FirstWarningTime,tz="Etc/GMT+6") ### confirmed sensors using MDT
+WainwrightApr2024$FirstAlertTime <- ymd_hm(WainwrightApr2024$FirstAlertTime,tz="Etc/GMT+6")
+
+WainwrightApr2024 <- WainwrightApr2024 %>% mutate(IgnUTC = with_tz(ReportedIgnTime,tz="UTC")) %>% mutate(IgnDOY = yday(IgnUTC))
+
+
+  WainwrightApr2024 <- WainwrightApr2024 %>% mutate(ReportedIgnTime = 
+  case_when(
+ FireType == "Prescribed" ~ (ReportedIgnTime - minutes(55)),
+FireType == "Wildfire" ~ (ReportedIgnTime - minutes(55)),  
+  .default = ReportedIgnTime
+))
+
+### calculate the number of minutes between reported ignition and the first warning time:
+WainwrightApr2024 <- WainwrightApr2024 %>%mutate(TimetoFirstWarning = interval(ReportedIgnTime,FirstWarningTime) %/%minutes(1)) %>%mutate(TimetoFirstAlert = interval(ReportedIgnTime,FirstAlertTime) %/%minutes(1))
+
+
+
+###manually input the first VIIRS time (UTC) for selected fires:
+WainwrightApr2024$FirstVIIRStime[8] <- c("2024-04-11 09:20") ##nothing until smouldering at 3am the next morning, FRP 1.67 MW just one
+WainwrightApr2024$FirstObsFRP[8] <- c(1.7)
+WainwrightApr2024$FirstVIIRStime[9] <- c("2024-04-11 19:10") ## SNPP, ~200 MW obs, good example of detection under cirrus cloud at edge of swath
+WainwrightApr2024$FirstObsFRP[9] <- 232
+WainwrightApr2024$FirstVIIRStime[12] <- c("2024-04-23 17:51") ### MODIS Terra FRP between 11.5 and 63 MW
+WainwrightApr2024$FirstObsFRP[12] <- 108
+WainwrightApr2024$FirstVIIRStime[14] <- c("2024-04-24 18:31") ## MODIS Terra 1413 MW total
+WainwrightApr2024$FirstVIIRStime[15] <- c("2024-04-25 09:58") #SNPP overnight , two hotspots 1.64 and 0.74 MW
+WainwrightApr2024$FirstObsFRP[15] <- 2.3
+WainwrightApr2024$FirstVIIRStime[16] <- c("2024-04-25 19:19") ##one NOAA-21 hotspot
+WainwrightApr2024$FirstObsFRP[16] <- 6.93
+
+
+ 
+WainwrightApr2024$FirstVIIRStime <- ymd_hm(WainwrightApr2024$FirstVIIRStime,tz="UTC")
+
+
+
+
+ ##then compute interval minutes like above:
+ 
+ WainwrightApr2024 <- WainwrightApr2024 %>%mutate(TimetoFirstVIIRS = interval(ReportedIgnTime,FirstVIIRStime) %/%minutes(1))
+ 
+ #### now for GOES:
+ 
+
+WainwrightApr2024$FirstGOEStime[12] <- c("2024-04-23 18:11") ### GOES 18 FRP 86.7 (KCL algorithm)
+WainwrightApr2024$FirstGOEStime[14] <- c("2024-04-24 17:01") ### GOES 18 (KCL algorithm), 2 hotspots 107.7 MW total
+WainwrightApr2024$FirstObsFRP[14] <- 108
+#WainwrightApr2024$FirstGOEStime[16] #none
+ 
+WainwrightApr2024$FirstGOEStime <- ymd_hm(WainwrightApr2024$FirstGOEStime,tz="UTC")
+
+ ##then compute interval minutes like above:
+ 
+ WainwrightApr2024 <- WainwrightApr2024 %>%mutate(TimetoFirstGOES = interval(ReportedIgnTime,FirstGOEStime) %/%minutes(1))
+ 
+#units(WainwrightApr2024$TimetoFirstWarning) <- "min"
+#units(WainwrightApr2024$TimetoFirstAlert) <- "min"
+#units(WainwrightApr2024$TimetoFirstVIIRS) <- "min"
+#units(WainwrightApr2024$TimetoFirstGOES) <- "min"
+
+####next, for each fire in the "WainwrightApr2024" table, grab the location of the sensor providing the warning, and grab the two lat/longs, use st_distance:
+
+#https://gis.stackexchange.com/questions/371104/calculate-st-distance-between-the-point-in-km-m
+Sensor_Locs <- read.csv("~/DRDC-smoke/Sensor_Locs.csv")
+
+Sensor_Locs <- Sensor_Locs %>% rename(y = Lat, x = Long)
+
+WainwrightApr2024 <- WainwrightApr2024 %>% left_join(Sensor_Locs, by=join_by(WarningSensor == Sensor.Name))
+
+if (require(sp, quietly = TRUE)) {
+ data(meuse, package = "sp")
+ meuse_sf = st_as_sf(meuse, coords = c("x", "y"), crs = 28992, agr = "identity")
+ meuse_sf[1:3,]
+ summary(meuse_sf)
+}
+
+SensorNameList <- WainwrightApr2024 %>% filter(!is.na(x))
+
+FireNameList <- WainwrightApr2024 %>% filter(!is.na(WarningSensor))
+
+sensors_sf = st_as_sf(SensorNameList, coords = c("x", "y"), crs = 4326, agr = "identity")
+
+fires_sf = st_as_sf(FireNameList, coords = c("LONG", "LAT"), crs = 4326, agr = "identity")
+
+fire_to_AlertSensor <- st_distance(sensors_sf,fires_sf,by_element=TRUE) %>% bind_cols(fires_sf) 
+colnames(fire_to_AlertSensor)[1] <- c("DistToSensor")
+
+fire_to_AlertSensor <- fire_to_AlertSensor %>% select(DistToSensor,FireName)
+
+###append the sensor distance to fire info to the main data frame:
+WainwrightApr2024 <- WainwrightApr2024 %>% left_join(fire_to_AlertSensor, by=join_by(FireName))
+
+
+###for each fire record, grab the ignition FWI and FBP,
+
+### then run the FBP script again for each fire as a new dataframe just for each fire, with 10-min frequency or something (run the fbp function over in a loop with hr = 0.16 (10-min) steps or something). Run this out for 3 hours or until the elliptical size is equal to the reported final size
+
+
+RadFrac <- 0.17 ###assuming a simple 17% radiative fraction of total fire energy (close to Byram and recent lab stuff)
+ConvFrac <- 0.52 ###assuming a simple 52% convective fraction of total fire can fine tune this value against CFFEPS, following Freeborn et al
+
+###############
+### Per-fire 10-minute elliptical growth simulations
+##############
+
+#########
+#make a NA-filled array of the FWI-FBP outputs, plus one more column for fire name, and one more column for Elapsed Time
+### classic approach
+#FwiFbpFiresList <- as.data.frame(array(NA,c(nrow(WainwrightApr2024)*18, (ncol(HourlyFwiFbp)+2))))
+
+### or, could do this by tidyverse::expand....
+FwiFbpFiresList <- WainwrightApr2024 %>% expand(FireName,1:18) ### run each fire out for 6 timesteps/hour x 6 hours potentially
+colnames(FwiFbpFiresList)[2] <- c("TimeStep")
+
+#hr <- array(NA,c(nrow(FwiFbpFiresList)))
+LocalTime <- array(NA,c(nrow(FwiFbpFiresList)))
+#Temp.out <- as.data.frame(array(NA,dim=c(1,86)))
+
+hr_newlist <- seq(1:18)*10/60
+
+k<-1 ## k being equal to the index of the final dataframe
+
+temp.all <- HourlyFwiFbp %>% filter(time == WainwrightApr2024$RoundedIgnTime[k]) 
+ temp <- temp.all %>% select(time:fueltype)
+ temp <- uncount(temp,18) ##repeat the same hourly data 16 times, via uncount
+ temp$Accel <- 1
+ temp$hr <- hr_newlist
+ temp$cc <- temp$percent_cured
+ temp <- cbind(temp,fbp(temp,output="all"))
+ Temp.out <- temp
+ 
+##loop the rest
+
+for (k in seq(from=2,to=nrow(WainwrightApr2024)))
+ 
+{
+ temp.all <- HourlyFwiFbp %>% filter(time == WainwrightApr2024$RoundedIgnTime[k]) 
+ temp <- temp.all %>% select(time:fueltype)
+ temp <- uncount(temp,18) ##repeat the same hourly data 16 times, via uncount
+ temp$Accel <- 1
+ temp$hr <- hr_newlist
+ temp$cc <- temp$percent_cured
+ temp <- cbind(temp,fbp(temp,output="all"))
+ Temp.out <- rbind(Temp.out,temp)
+  }
+
+
+FireGrowthTimeSeries <- cbind(FwiFbpFiresList,Temp.out)
+
+
+FireGrowthTimeSeries <- FireGrowthTimeSeries %>% 
+ group_by(FireName) %>% 
+ mutate(mgROS = gsi/1.11) %>% ###
+ mutate(DT = cumsum((mgROS+(BROSt/HROSt)*mgROS)*10)) %>% ##use the gsi to get matted grass ROS (mgROS), then use the ratio of backing to head ROS from the FBP to get DT as per ST-X-3 ellipse equations
+ #mutate(DT = cumsum((HROSt+BROSt)*10)) %>% ##old version using FBP outputs, now using gsi to get ROS
+ mutate(mgHFI = mgROS/60*18*TFC) %>%
+ mutate(A = ((pi/(4*LB)))*DT^2/(10000)) %>% ### ST-X-3 equation for elliptical fire growth area in hectares
+ mutate(
+  deltaA = case_when(
+   hr > 0.2 ~ A - lag(A),
+   hr < 0.2 ~ A,
+   .default = NA
+   ) ### at first time step, deltaA is equal to A
+  ) %>% ### need to fix so it works on the first row too
+ mutate(MW = deltaA*10000*TFC*18/(10*60)) %>% ##fire total energy equation: 10,000 in conversion to m2 from hectares, TFC is in kg/m2, 18 is MJ/kg of TFC, 10 is 10-min timestep, 60 is conversion from seconds to minutes
+ mutate(MWfrp = MW*RadFrac) %>%
+ mutate(MWconv=MW*ConvFrac) %>%
+ mutate(Bflux=(MWconv*9.81/(1.293*1005*(temp+273))*10^6)) %>% ### Bflux from Brigg's plume rise model
+ mutate(zHfluxm=((3/(2*0.6^2))*Bflux/(pi*(ws*Gradientfrom10mOpen/3.6)^3))^(1/3)*(ws/3.6*10*60)^(2/3))# %>%
+ #mutate(VisDist=)##final plume rise using a distance of ws(m/s)*simulation length
+
+#### Need to think about total atmospheric transmittance in the longwave though!!
+
+
+##grab just the final fire size, warning/alter times by FireName
+FinalSize <- WainwrightApr2024 %>% select(FireName,ReportedFinalArea)
+TimetoFirstWarning <- WainwrightApr2024 %>% select(FireName,TimetoFirstWarning)
+TimetoFirstAlert <- WainwrightApr2024 %>% select(FireName,TimetoFirstAlert)
+
+#units(TimetoFirstWarning$TimetoFirstWarning) <- NULL
+#units(TimetoFirstAlert$TimetoFirstAlert) <- NULL
+
+###importReportedFinalArea from Wainwright df into fire growth data frame
+FireGrowthTimeSeries <- FireGrowthTimeSeries %>% inner_join(FinalSize) %>% inner_join(TimetoFirstWarning) %>% inner_join(TimetoFirstAlert)
+
+###think about remotely sensed cloud top heights? ie https://worldview.earthdata.nasa.gov/?v=-114.0196747971049,51.53022729988315,-108.6357122762328,54.23804374420412&ici=3&icd=1&l=Reference_Labels_15m,Reference_Features_15m,Coastlines_15m,MODIS_Aqua_Cloud_Top_Height_Day(hidden),MODIS_Terra_Cloud_Top_Height_Day(hidden),VIIRS_SNPP_Cloud_Top_Height_Day(hidden),VIIRS_NOAA20_Cloud_Top_Height_Day(hidden),VIIRS_NOAA21_Thermal_Anomalies_375m_All,VIIRS_NOAA20_Thermal_Anomalies_375m_All,MODIS_Combined_Thermal_Anomalies_All,VIIRS_NOAA21_CorrectedReflectance_TrueColor(hidden),VIIRS_NOAA20_CorrectedReflectance_TrueColor(hidden),VIIRS_SNPP_CorrectedReflectance_TrueColor(hidden),MODIS_Aqua_CorrectedReflectance_TrueColor(hidden),MODIS_Terra_CorrectedReflectance_TrueColor&lg=true&t=2024-04-24-T10%3A41%3A14Z
+
+###the WR data for the 24th shows ~1.6 km cloud heights
+ 
+###then, delete rows where A > reported final size * 120% or so
+FireGrowthTimeSeries <- FireGrowthTimeSeries %>% filter(A<ReportedFinalArea*1.2)
+
+write.csv(FireGrowthTimeSeries,"~/DRDC-smoke/CFB_Wainwright_FireGrowthTimeSeries.csv")
+
+```
+
+```{r load-fire-records-run-FBP-VC, message=FALSE, warning=FALSE, include=FALSE}
+
+####load the fire records, determine which are line ignitions? Maybe re-run the FBP script just for those hours?
+VC2023FireReports <- read_csv("~/DRDC-smoke/Valcartier2023.csv", 
+col_types = cols(ReportedIgnTime = col_character(), 
+FirstWarningTime = col_character(), 
+FirstAlertTime = col_character(), 
+RoundedIgnTime = col_character(), 
+FirstVIIRStime = col_character(), 
+FirstVIIRSfrp = col_double(), FirstGOEStime = col_character(), 
+FirstGOESfrp = col_double(),FirstObsFRP=col_double()))
+
+###scenario: is VC-2 fire actually May 14 12:08 EST ignition? location lines up perfectly, as does the order of it. As provided by VC, ign day is May 23, which is 100% cloud-free but no heat signatures but there is an alert
+
+#VC2023FireReports$ReportedIgnTime[2] <- c("2023-05-14 12:08")
+
+
+VC2023FireReports$ReportedIgnTime <- ymd_hm(VC2023FireReports$ReportedIgnTime,tz="Etc/GMT+4")
+VC2023FireReports$RoundedIgnTime <- ymd_hm(VC2023FireReports$RoundedIgnTime,tz="Etc/GMT+4")
+VC2023FireReports$FirstWarningTime <- ymd_hm(VC2023FireReports$FirstWarningTime,tz="Etc/GMT+4")
+VC2023FireReports$FirstAlertTime <- ymd_hm(VC2023FireReports$FirstAlertTime,tz="Etc/GMT+4")
+
+VC2023FireReports <- VC2023FireReports %>% mutate(IgnUTC = with_tz(ReportedIgnTime,tz="UTC")) %>% mutate(IgnDOY = yday(IgnUTC))
+
+##based on WR fire reports and documentation, use same 55 minute ignition duration, so set the actual first ignition operation 55 min earlier than the final reported time, which represents the completion of ignition operations:  
+
+VC2023FireReports <- VC2023FireReports %>% mutate(ReportedIgnTime = 
+  case_when(
+ FireType == "Prescribed" ~ (ReportedIgnTime - minutes(55)),
+FireType == "Wildfire" ~ (ReportedIgnTime - minutes(55)),  
+  .default = ReportedIgnTime
+))
+
+### calculate the number of minutes between reported ignition and the first warning time:
+VC2023FireReports <- VC2023FireReports %>%mutate(TimetoFirstWarning = interval(ReportedIgnTime,FirstWarningTime) %/%minutes(1)) %>% mutate(TimetoFirstAlert = interval(ReportedIgnTime,FirstAlertTime) %/% minutes(1))
+
+
+###manually input the first VIIRS time for selected fires:
+VC2023FireReports$FirstVIIRStime[1] <- c("2023-05-14 06:45") ## two Suomi NPP detections, each 0.87 MW
+VC2023FireReports$FirstObsFRP[1] <- 1.8
+#VC2023FireReports$FirstVIIRStime[2] <- c(" ") ## Is this ign time actually May 14 at 12:08 EST?
+VC2023FireReports$FirstVIIRStime[3] <- c("2023-05-29 17:38") ## NOAA-20, FRP 2.92 MW, low confidence, fairly off-nadir so interesting
+VC2023FireReports$FirstObsFRP[3] <- 2.9
+
+
+ 
+VC2023FireReports$FirstVIIRStime <- ymd_hm(VC2023FireReports$FirstVIIRStime,tz="UTC")
+
+ ##then compute interval minutes like above:
+ 
+ VC2023FireReports <- VC2023FireReports %>%mutate(TimetoFirstVIIRS = interval(IgnUTC,FirstVIIRStime) %/%minutes(1))
+ VC2023FireReports$TimetoFirstVIIRS[2] <- NA ## was not detected
+ 
+
+##################
+### Sensor Locations
+##################
+
+VC2023FireReports <- VC2023FireReports %>% left_join(Sensor_Locs, by=join_by(AlertSensor == Sensor.Name))
+
+
+SensorNameList <- VC2023FireReports %>% filter(!is.na(x)) ## "x" in this case being the longitude of the smoke sensor
+
+FireNameList <- VC2023FireReports %>% filter(AlertSensor != "N/A") ### is a character "N/A" for some reason
+
+sensors_sf = st_as_sf(SensorNameList, coords = c("x", "y"), crs = 4326, agr = "identity")
+
+fires_sf = st_as_sf(FireNameList, coords = c("LONG", "LAT"), crs = 4326, agr = "identity")
+
+fire_to_AlertSensor <- st_distance(sensors_sf,fires_sf,by_element=TRUE) %>% bind_cols(fires_sf) 
+colnames(fire_to_AlertSensor)[1] <- c("DistToSensor")
+
+fire_to_AlertSensor <- fire_to_AlertSensor %>% select(DistToSensor,FireName)
+
+###append the sensor distance to fire info to the main data frame:
+VC2023FireReports <- VC2023FireReports %>% left_join(fire_to_AlertSensor, by=join_by(FireName))
+
+
+
+
+
+
+RadFrac <- 0.17 ###assuming a simple 17% radiative fraction of total fire energy (close to Byram and recent lab stuff)
+ConvFrac <- 0.52 ###assuming a simple 52% convective fraction of total fire can fine tune this value against CFFEPS, following Freeborn et al
+
+###############
+### Per-fire 10-minute elliptical growth simulations
+##############
+
+#########
+#make a NA-filled array of the FWI-FBP outputs, plus one more column for fire name, and one more column for Elapsed Time
+### classic approach
+#FwiFbpFiresList <- as.data.frame(array(NA,c(nrow(WainwrightApr2024)*18, (ncol(HourlyFwiFbp)+2))))
+
+### or, could do this by tidyverse::expand....
+FwiFbpFiresList <- VC2023FireReports %>% expand(FireName,1:18) ### run each fire out for 6 timesteps/hour x 6 hours potentially
+colnames(FwiFbpFiresList)[2] <- c("TimeStep")
+
+#hr <- array(NA,c(nrow(FwiFbpFiresList)))
+LocalTime <- array(NA,c(nrow(FwiFbpFiresList)))
+#Temp.out <- as.data.frame(array(NA,dim=c(1,86)))
+
+hr_newlist <- seq(1:18)*10/60
+
+k<-1 ## k being equal to the index of the final dataframe
+
+temp.all <- HourlyFwiFbp_VC %>% filter(time == VC2023FireReports$RoundedIgnTime[k]) 
+ temp <- temp.all %>% select(id:gsi)
+ temp <- uncount(temp,18) ##repeat the same hourly data 16 times, via uncount
+ temp$Accel <- 0 ##VC is all prescribed fires, so line ignitions
+ temp$hr <- hr_newlist
+ temp$cc <- temp$percent_cured
+ temp <- cbind(temp,fbp(temp,output="all"))
+ Temp.out <- temp
+ 
+##loop the rest
+
+for (k in seq(from=2,to=nrow(VC2023FireReports)))
+ 
+{
+ temp.all <- HourlyFwiFbp_VC %>% filter(time == VC2023FireReports$RoundedIgnTime[k]) 
+ temp <- temp.all %>% select(id:gsi)
+ temp <- uncount(temp,18) ##repeat the same hourly data 16 times, via uncount
+ temp$Accel <- 0 ##should be Accel == 1 for wildfires, Accel = 0 (line) for prescribed fires
+ temp$hr <- hr_newlist
+ temp$cc <- temp$percent_cured
+ temp <- cbind(temp,fbp(temp,output="all"))
+ Temp.out <- rbind(Temp.out,temp)
+  }
+
+
+FireGrowthTimeSeries_VC <- cbind(FwiFbpFiresList,Temp.out)
+
+
+### then calculate many derived values:
+
+FireGrowthTimeSeries_VC <- FireGrowthTimeSeries_VC %>% 
+ group_by(FireName) %>% 
+ mutate(mgROS = gsi/1.11) %>% ###
+ mutate(DT = cumsum((mgROS+(BROSt/HROSt)*mgROS)*10)) %>% ##use the gsi to get matted grass ROS (mgROS), then use the ratio of backing to head ROS from the FBP to get DT as per ST-X-3 ellipse equations
+ mutate(mgHFI = mgROS/60*18*TFC) %>%
+ mutate(A = ((pi/(4*LB)))*DT^2/(10000)) %>%
+ mutate(
+  deltaA = case_when(
+   TimeStep >1 ~ A - lag(A),
+   TimeStep == 1 ~ A,
+   .default = NA
+   ) ### at first time step, deltaA is equal to A
+  ) %>% ### need to fix so it works on the first row too
+ mutate(MW = deltaA*10000*TFC*18/(10*60)) %>%
+ mutate(MWfrp = MW*RadFrac*TopOfAtmTrans) %>%
+ mutate(MWconv=MW*ConvFrac) %>%
+ mutate(Bflux=(MWconv*9.81/(1.293*1005*(temp+273))*10^6)) %>% ### Bflux from Brigg's plume rise model
+ mutate(zHfluxm=((3/(2*0.6^2))*Bflux/(pi*(ws*Gradientfrom10mOpen/3.6)^3))^(1/3)*(ws/3.6*10*60)^(2/3))# %>%
+ #mutate(VisDist=)##final plume rise using a distance of ws(m/s)*simulation length
+
+#### Need to think about total atmospheric transmittance in the longwave though!!
+
+
+##grab just the final fire size by FireName
+FinalSize <- VC2023FireReports %>% select(FireName,ReportedFinalArea)
+TimetoFirstWarning <- VC2023FireReports %>% select(FireName,TimetoFirstWarning)
+TimetoFirstAlert <- VC2023FireReports %>% select(FireName,TimetoFirstAlert)
+
+#units(TimetoFirstWarning$TimetoFirstWarning) <- NULL
+#units(TimetoFirstAlert$TimetoFirstAlert) <- NULL
+
+
+###importReportedFinalArea from Wainwright df into fire growth data frame
+FireGrowthTimeSeries_VC <- FireGrowthTimeSeries_VC %>% inner_join(FinalSize) %>% inner_join(TimetoFirstWarning) %>% inner_join(TimetoFirstAlert)
+  
+ 
+###then, delete rows where A > reported final size * 120% or so
+FireGrowthTimeSeries_VC <- FireGrowthTimeSeries_VC %>% filter(A<ReportedFinalArea*1.2)
+
+write.csv(FireGrowthTimeSeries_VC,"~/DRDC-smoke/CFB_Valcartier_FireGrowthTimeSeries.csv")
+
+```
+
+```{r load-fire-records-run-FBP-RC, message=FALSE, warning=FALSE, include=FALSE}
+
+####load the fire records, determine which are line ignitions? Maybe re-run the FBP script just for those hours?
+#RC2024FireReports <- read_csv("~/DRDC-smoke/RC2024.csv", 
+#col_types = cols(ReportedIgnTime = col_character(), 
+#FirstWarningTime = col_character(), 
+#FirstAlertTime = col_character(), 
+#RoundedIgnTime = col_character(), 
+#FirstVIIRStime = col_character(), 
+#FirstVIIRSfrp = col_double(), FirstGOEStime = col_character(), 
+#FirstGOESfrp = col_double()))
+
+#already loaded reportedIgnTime above
+#RC2024FireReports$ReportedIgnTime <- ymd_hm(RC2024FireReports$ReportedIgnTime,tz="Etc/GMT+7")
+#RC2024FireReports$RoundedIgnTime <- ymd_hm(RC2024FireReports$RoundedIgnTime,tz="Etc/GMT+7")
+RC2024FireReports$FirstWarningTime <- ymd_hm(RC2024FireReports$FirstWarningTime,tz="Etc/GMT+7") 
+### in case the warning reporting system uses standard time not daylight time, can set this differently
+RC2024FireReports$FirstAlertTime <- ymd_hm(RC2024FireReports$FirstAlertTime,tz="Etc/GMT+7")
+
+RC2024FireReports <- RC2024FireReports %>% mutate(IgnUTC = with_tz(ReportedIgnTime,tz="UTC")) %>% mutate(IgnDOY = yday(IgnUTC))
+
+
+##use same 55 minute ignition operation duration as used in WR and VC fires:
+RC2024FireReports <- RC2024FireReports %>% mutate(ReportedIgnTime = 
+  case_when(
+ FireType == "Prescribed" ~ (ReportedIgnTime - minutes(55)),
+FireType == "Wildfire" ~ (ReportedIgnTime - minutes(55)),  
+  .default = ReportedIgnTime
+))
+
+### calculate the number of minutes between reported ignition and the first warning time:
+RC2024FireReports <- RC2024FireReports %>%mutate(TimetoFirstWarning = interval(ReportedIgnTime,FirstWarningTime) %/%minutes(1)) %>% mutate(TimetoFirstAlert = interval(ReportedIgnTime,FirstAlertTime) %/% minutes(1))
+
+
+###If the end of ignition operations is noted (like in WR), then can apply an offset here corresponding to the duration of ignition operations
+RC2024FireReports$TimetoFirstWarning <- RC2024FireReports$TimetoFirstWarning + 0
+RC2024FireReports$TimetoFirstAlert <- RC2024FireReports$TimetoFirstAlert + 0
+
+##note the patchy cloud cover during VIIRS overpasses: https://worldview.earthdata.nasa.gov/?v=-119.20079828993254,48.876058452637814,-117.94151960956121,49.5094015536481&l=Reference_Labels_15m,Reference_Features_15m,Coastlines_15m,OCI_PACE_True_Color(hidden),VIIRS_NOAA21_CorrectedReflectance_TrueColor,VIIRS_NOAA20_CorrectedReflectance_TrueColor,VIIRS_SNPP_CorrectedReflectance_TrueColor,MODIS_Aqua_CorrectedReflectance_TrueColor(hidden),MODIS_Terra_CorrectedReflectance_TrueColor(hidden)&lg=true&t=2024-09-19-T19%3A55%3A17Z
+
+
+
+###manually input the first GOES time for selected fires:
+RC2024FireReports$FirstGOEStime[1] <- c("2024-09-19 23:21:00") ## GOES18 at 49.095	-118.988 FRP of 69.3
+RC2024FireReports$FirstObsFRP[1] <- 69
+
+ 
+RC2024FireReports$FirstGOEStime <- ymd_hms(RC2024FireReports$FirstGOEStime,tz="UTC")
+
+ ##then compute interval minutes like above:
+ 
+ RC2024FireReports <- RC2024FireReports %>%mutate(TimetoFirstGOES = interval(IgnUTC,FirstGOEStime) %/%minutes(1))
+ 
+
+##################
+### Sensor Locations
+##################
+
+RC2024FireReports <- RC2024FireReports %>% left_join(Sensor_Locs, by=join_by(AlertSensor == Sensor.Name))
+
+SensorNameList <- RC2024FireReports %>% filter(!is.na(x)) ## "x" in this case being the longitude of the smoke sensor
+
+FireNameList <- RC2024FireReports %>% filter(AlertSensor != "N/A") ### is a character "N/A" for some reason
+
+sensors_sf = st_as_sf(SensorNameList, coords = c("x", "y"), crs = 4326, agr = "identity")
+
+fires_sf = st_as_sf(FireNameList, coords = c("LONG", "LAT"), crs = 4326, agr = "identity")
+
+fire_to_AlertSensor <- st_distance(sensors_sf,fires_sf,by_element=TRUE) %>% bind_cols(fires_sf) 
+
+colnames(fire_to_AlertSensor)[1] <- c("DistToSensor")
+
+fire_to_AlertSensor <- fire_to_AlertSensor %>% select(DistToSensor,FireName)
+
+###append the sensor distance to fire info to the main data frame:
+RC2024FireReports <- RC2024FireReports %>% left_join(fire_to_AlertSensor, by=join_by(FireName))
+
+
+
+
+
+
+RadFrac <- 0.17 ###assuming a simple 17% radiative fraction of total fire energy (close to Byram and recent lab stuff)
+ConvFrac <- 0.52 ###assuming a simple 52% convective fraction of total fire can fine tune this value against CFFEPS, following Freeborn et al
+
+###############
+### Per-fire 10-minute elliptical growth simulations
+##############
+
+#########
+#make a NA-filled array of the FWI-FBP outputs, plus one more column for fire name, and one more column for Elapsed Time
+### classic approach
+#FwiFbpFiresList <- as.data.frame(array(NA,c(nrow(WainwrightApr2024)*18, (ncol(HourlyFwiFbp)+2))))
+
+numHours <- 6
+
+### or, could do this by tidyverse::expand....
+FwiFbpFiresList <- RC2024FireReports %>% expand(FireName,1:18) ### run each fire out for 6 timesteps/hour x 6 hours potentially
+colnames(FwiFbpFiresList)[2] <- c("TimeStep")
+
+#hr <- array(NA,c(nrow(FwiFbpFiresList)))
+LocalTime <- array(NA,c(nrow(FwiFbpFiresList)))
+#Temp.out <- as.data.frame(array(NA,dim=c(1,86)))
+
+hr_newlist <- seq(1:18)*10/60
+
+k<-1 ## k being equal to the index of the final dataframe
+i<-1
+### this step needs to actually take hr into account and not use the same hour for each fire
+
+for(i in seq(1:18))
+{
+temp.all <- HourlyFwiFbp_RC %>% filter(time == round_date(RC2024FireReports$RoundedIgnTime[k]+minutes(10*i),unit="hour"))
+
+
+ temp <- temp.all %>% select(id:gsi)
+ temp$Accel <- 0
+ temp$hr <- hr_newlist[i]
+ temp$cc <- 100
+ 
+ 
+ temp <- cbind(temp, fbp(temp,output="all"))
+ if(i==1) Temp.out <- temp
+ if(i>1) Temp.out <- rbind(Temp.out,temp)
+}
+ 
+FireGrowthTimeSeries_RC <- cbind(FwiFbpFiresList,Temp.out)
+
+
+
+
+
+### then calculate many derived values:
+
+FireGrowthTimeSeries_RC <- FireGrowthTimeSeries_RC %>% 
+ group_by(FireName) %>% 
+ mutate(mgROS = gsi/1.11) %>% ###
+ mutate(DT = cumsum((mgROS+(BROSt/HROSt)*mgROS)*10)) %>% ##use the gsi to get matted grass ROS (mgROS), then use the ratio of backing to head ROS from the FBP to get DT as per ST-X-3 ellipse equations
+ mutate(mgHFI = mgROS/60*18*TFC) %>%
+ mutate(A = ((pi/(4*LB)))*DT^2/(10000)) %>%
+ mutate(
+  deltaA = case_when(
+   TimeStep >1 ~ A - lag(A),
+   TimeStep == 1 ~ A,
+   .default = NA
+   ) ### at first time step, deltaA is equal to A
+  ) %>% ### need to fix so it works on the first row too
+ mutate(MW = deltaA*10000*TFC*18/(10*60)) %>%
+ mutate(MWfrp = MW*RadFrac*TopOfAtmTrans) %>%
+ mutate(MWconv=MW*ConvFrac) %>%
+ mutate(Bflux=(MWconv*9.81/(1.293*1005*(temp+273))*10^6)) %>% ### Bflux from Brigg's plume rise model
+ mutate(zHfluxm=((3/(2*0.6^2))*Bflux/(pi*(ws*Gradientfrom10mOpen/3.6)^3))^(1/3)*(ws/3.6*10*60)^(2/3))# %>%
+ #mutate(VisDist=)##final plume rise using a distance of ws(m/s)*simulation length
+
+#### Need to think about total atmospheric transmittance in the longwave though!!
+
+
+##grab just the final fire size by FireName
+FinalSize <- RC2024FireReports %>% select(FireName,ReportedFinalArea)
+TimetoFirstWarning <- RC2024FireReports %>% select(FireName,TimetoFirstWarning)
+TimetoFirstAlert <- RC2024FireReports %>% select(FireName,TimetoFirstAlert)
+
+#units(TimetoFirstWarning$TimetoFirstWarning) <- NULL
+#units(TimetoFirstAlert$TimetoFirstAlert) <- NULL
+
+
+###importReportedFinalArea from other df into fire growth data frame
+FireGrowthTimeSeries_RC <- FireGrowthTimeSeries_RC %>% inner_join(FinalSize) %>% inner_join(TimetoFirstWarning) %>% inner_join(TimetoFirstAlert)
+  
+ 
+###then, delete rows where A > reported final size * 120% or so
+FireGrowthTimeSeries_RC <- FireGrowthTimeSeries_RC %>% filter(A<ReportedFinalArea*1.2)
+
+write.csv(FireGrowthTimeSeries_RC,"~/DRDC-smoke/RockCreek_FireGrowthTimeSeries.csv")
+
+```
+
+```{r allfires-ign-wx-table, echo=FALSE, message=FALSE, warning=FALSE, tab.cap="\\label{tab:allfires-ign-wx-table}Description of prescribed fire and wildfire incidents during the sensor deployment period. Weather and fire weather metrics are for the hour of ignition"}
+
+## combine all fires in one table
+
+
+all_fires_wx<- rbind(WainwrightApr2024_wx_summary,VC2023_wx_summary,RC2024_wx_summary)
+
+all_fires_wx<-all_fires_wx  %>% rename('Lon' = LONG) %>% rename('Air temp' = temp) %>% rename('Relative Humidity (%)' = rh) %>% rename('Wind Speed (km/h)' = ws) %>% rename('Wind Dir (deg)' = wd) %>% rename('Lat' = LAT) %>% mutate(solrad = solrad*1000) %>% rename('Solar Radiation (W/m2)' = solrad) %>% rename('GFMC' = gfmc) %>% rename('GSI' = gsi) %>% rename('GFWI' = gfwi) %>% rename('Ignition time' = ReportedIgnTime) #%>% rename('Fire name' = FireName)
+
+#%>% rename('Lat' = LAT)
+
+kbl(all_fires_wx,align="c",digits=c(0,0,2,2,0,0,0,2,0,0,0),caption="Weather and fire weather conditions at the time of ignition for each fire. Acronyms as follows: GFMC = Grassland Fuel Moisture Code; GSI = Grassland Spread Index; GFWI = Grassland Fire Weather Index.") %>% kable_minimal()  %>% column_spec(1:12, width = "1.8cm") %>%
+ kable_styling(latex_options = "scale_down") %>%
+ kable_styling(latex_options = "hold_position")
+
+
+```
+
+# Results and Discussion
+
+## Detection of large fires (over 50 ha)
+
+### Wainwright
+
+At Wainwright, all large fires were prescribed fires with the exception of WR-15 which was an unplanned spillover from the WR-14 prescribed fire earlier that day (Figure \ref{fig:WR-FWI}). All five fires over 100 ha were detected by the smoke sensors (Figure \ref{fig:WR-map}), with first warnings 13--309 minutes after ignition and first alert at 23--338 minutes after ignition. The median distance between the fire ignition point at the smoke sensor was approximately 1500 m, and ranged from 500 m to 4.8 km. At the time of the first warning, three (WR-12, WR-09, WR-08) out of the five fires had already grown to their final size (i.e. completed active fire growth in area) while the largest fire of the group, WR-15, was at approximately 420 ha of its final 600 ha fire size. In these cases, it was likely that the main smoke column during flaming combustion was lofted immediately above the nearby smoke sensors, and it was not until the cessation of flaming combustion that the convective column collapsed and residual smoke was advected. A similar phenomenon has been observed in experimental fires under light to moderate winds [@hudaStudyFuelSmokeDynamics2020].
+
+For the 500 ha WR-14 prescribed fire, the southerly winds and large ignition area allowed the rapid detection of the WR-14 fire, which experienced a rapid increase from ambient PM2.5 concentrations of \<10 ug/m^3^ to 3,260 ug/m^3^ at a sensor location 1.8 km downwind. PM concentrations continued to be elevated above 100 ug/m^3^ for an additional 4 hours. GOES fire detection occurred within 59 minutes after the completion of ignition operations, with two GOES-18 hotspots totalling 107.7 MW detected. NOAA VIIRS sensors detected a similar sum of 108 MW of fire radiative power at 149 minutes after ignition during the early afternoon overpasses. All of the additional sensors at Wainwright were deployed further south except one sensor located 3 km to the west, which also did not register any elevated PM concentrations. Photos of the strip backing fire ignition pattern at 09:00 showed light winds corresponding to station measurements of 10 km/h winds, but by the time of completion of ignition operations at 11:00, winds had increased rapidly to 30 km/h and relative humidity of 15%, resulting in a Grassland Spread Index of 95 (Table \ref{tab:allfires-ign-wx-table}). Of the large fires at Wainwright, WR-14 had the most severe fire weather conditions of the large fires and the second highest wind speeds at ignition of all Wainwright fires. Unique to this fire was the rapid detection both by the smoke sensors as well as the GOES geostationary satellite. This rapid spread rate coupled with stronger winds leads to a lower plume height and more turbulent mixing of smoke down to the surface [@freitasTechnicalNoteSensitivity2010], which likely contributed to the rapid detection by the smoke sensors.
+
+Fire WR-15 was caused by an escaped spot fire from the WR-14 prescribed burn, and ignited at 16:07. With the southwesterly winds at 18 km/h, this fire spread northward and to the north of the entire sensor network, and was not captured by any ground-based smoke sensors until 19:43 when wind speeds dropped below 10 km/h and the winds shifted to the NW, allowing for for a sensor 6 km downwind to detect the lower-intensity smoke plume as the winds decreased and fire spread rates declined at sunset. Increasing cloud cover after the ignition of WR-15 at 16:00 likely prevented GOES detection despite the large fire size. Clear sky conditions the following day at 01:00 allowed for residual smouldering of 2 MW to be detected by the VIIRS sensor. Overnight smoke detection across 7 distinct sensors were made from WR-14 and WR-15 that extended over an area approximately 4,800 ha and up to 6.5 km from the WR-14 fire. Overnight winds were from the NW between 9 and 14 km/h. PM~2.5~ concentrations as high as 100 ug/m^3^ were detected in this dispersed ground-level smoke plume.
+
+Prescribed fire WR-08 (150 ha) took place at 09:00 local time under partially cloudy conditions with moderate relative humidity (50%) and strong winds (30 km/h) from the northwest. This fire, being on the eastern edge of the sensor layout, was not detected until 309 minutes (5 hours) after ignition when a sensor 1.7 km to the SW was able to detect smoke, likely residual smouldering smoke with little to no plume rise. This excess PM at the surface was detected for 4.25 hours afterwards and again at 18:14 and 23:37. Two additional sensors within 3 km of the burn registered fire warnings were made concurrently to the first sensor at 23:30 local time, suggesting low wind conditions overnight allowed for the widespread lateral dispersion of smoke to both the south and southwest in a 60 degree cone extending at least 2.5 km. No GOES data were detected for this fire due to the cloud; VIIRS detection only occurred the following morning when 2 MW of smouldering FRP was detected. Approximately 1 hour prior to the VIIRS detection, smoke sensor warning detections were made by two sensors located 1.4 and 2.6 km west of the fire, where PM~2.5~ concentrations in excess of 200 ug/m^3^ were detected.
+
+Prescribed fire WR-09 took place the morning following WR-08, but under cloud-free conditions. The 250 ha of fuels was detected as lighter southeast winds at 14-18 km/h advected smoke to a sensor located 1.1 km SW of the prescribed fire area at 140 minutes after ignition. GOES detections were not recorded, likely due to a thin cirrus cloud layer present during the entire burning period. S-NPP VIIRS detections of 232 MW were made within 215 minutes after ignition through the cirrus clouds.
+
+The 375 ha prescribed fire WR-12 was ignited approximately 500 m upwind of a smoke sensor under light (9 km/h) west winds. Ground-level smoke detection was not made until 133 minutes after ignition operations ceased, when a warning detection was registered. A second sensor located 2.8 km downwind of the fire triggered a warning detection 6 minutes later. A MODIS Terra fire detection was made 167 minutes after ignition with the late morning overpass, registering a total of 108 MW of FRP. The first GOES detection was made 20 minutes after the MODIS Terra detection, with an FRP of 86 MW detected. The ground-level smoke was detected for nearly 5 hours. An additional 4 sensors located southeast of the fire detected the smoke from 15:54 to 16:37. Five additional detections were made by sensors after sunset, in all directions and up to 6 km away.
+
+The final large fire of the season, the WR-16 prescribed fire, was ignited at 10:36 local time under light NW winds and partial cloud cover of thin cirrostratus cloud, eventually reaching a final size of 75 ha. The first detection of the fire was by the VIIRS sensor on the NOAA-21 satellite at 19:19 UTC, 218 minutes after ignition, where a single 7 MW hotspot was registered. At 19:47 UTC, two additional hotspots of 7 and 54 MW were detected by VIIRS on Suomi-NPP. The first smoke sensor warning occurred 396 minutes after ignition, where a sensor 4.7 km downwind registered a warning. Smoke events were registered by an additional 7 sensors overnight. No GOES detections were recorded for this fire, due in part to its smaller size as well as the nearly complete cover of cirrostratus cloud in the afternoon, which attenuates midwave radiation emitted by the fire.
+
+VIIRS detections were made in all five large fires at Wainwright. In three cases, morning ignitions between 10:00 to 11:00 local standard time resulted in VIIRS detections 94 to 160 minutes later. Of these, only one VIIRS detection was faster than the smoke sensors, and the fires in all cases far exceeded the minimum VIIRS detection radiative power of 0.5 MW. Two fires (WR-15 and WR-08) only had fire detections during the 01:00 nighttime overpass as residual flaming was visible. In the case of WR-15, the fire's ignition was at 16:07 local time, and therefore after the S-NPP and NOAA satellite daytime overpasses. GOES geostationary detections were only made in two fires (WR-12 and WR-14), with very rapid detection of WR-14 within minutes of the reported ignition while the fire was approximately 5 ha and near the GOES FRP detection threshold of 85 MW.
+
+```{r WR-map, echo=FALSE, fig.cap="\\label{fig::WR-map}Wainwright study area showing fire, sensors, and dotted lines linking the first fire detection (warning or alert) for each detected fire.  Arrow indicates observed wind direction at the time of detection.", message=FALSE, warning=FALSE, out.width="95%" }
+knitr::include_graphics("~/DRDC-smoke/WR.png")
+
+```
+
+### Valcartier and Rock Creek
+
+Prescribed fire VC-01 was ignition was completed at 14:05 local time on May 13 under light winds (5 km/h) but low humidity (22%) and correspondingly high Grassland Fuel Moisture Content (GFMC) of 91 (Figure \ref{fig:VC-FWI}). Conditions were mostly overcast with broken cloud. The light NE winds caused smoke to drift away from the sensors immediately east and northwest of the fire, and instead a sensor 2 km away made the first detection at 14:01 (Figure \ref{fig:VC2}). PM remained elevated at this sensor alone until 21:00 local time that evening. No GOES satellite detection was made of this fire, despite fire growth modelling approximating a peak FRP of 420 MW. Broken cloud cover likely interfered with any satellite fire detection. Cloud-free overnight conditions and into the next day allowed for a VIIRS detection of smouldering conditions, with 1 MW of FRP detected at 02:45 local time as a single pixel.
+
+By May 23, very large fires in Alberta and British Columbia, some 2,500 to 3,000 km to the west, had begun to bring smoke aloft into the Valcartier region. The VC-02 prescribed fire was ignited with a single sensor 500 m to the northwest at 10:08 on May 23 under NE winds at 11 km/h but higher humidity (56%) compared to VC-01, thus GFMC was 81. First smoke sensor detection was not made until 13:09 local time. Elevated PM from only the one sensor remained until 21:00. No GOES detection of this fire was made, despite the reported 75 ha size and theoretical peak FRP of 198 MW, which is well above the minimum floor for GOES detection under ideal cloud-free conditions. The slower pace of ignition operations compared to a free-growing fire [@mcrae1996] may have reduced the growth rate and thus FRP emissions below the threshold for GOES detection. MODIS Aqua Aerosol Optical Depth for the mid-day overhead was approximately 0.12 to 0.25, and likely did not significantly impact fire detection.
+
+The 75 ha prescribed fire at Rock Creek took place under light winds (5 km/h at ignition) and partially cloudy conditions (Figure \ref{fig:RC-FWI}) resulted in no ground-based smoke sensor detections until 298 minutes after ignition (Figure \ref{fig:RC}). A second sensor located a further 400 m downwind triggered a warning 4 minutes afterwards. A sensor located 900 m east and downwind did not detect the fire until a warning was issued at 20:10, after sunset. Three additional detections were made at 16:51 and through to 05:03 the following morning. GOES-18 detection occurred 213 minutes after ignition, when 69 MW of FRP was observed. VIIRS did not detect the fire until 1 MW was observed at 2:07 by the VIIRS sensor on the NOAA-20 satellite.
+
+## Detection of small fires
+
+Of the smaller fires 1 ha or less, Only three (WR-06, WR-07, WR-16) of ten of the fires registered a warning with the smoke sensors (Table \ref{tab:Final-summary-table}), and only two registered an alert. Similar to the large fires, in all three cases the fire had already reached its final size (i.e. was no longer growing) at the time of first warning. Fires were detected by smoke sensors 1.1 to 5.0 km away at 90--400 minutes after ignition. Fires WR-06 and WR-16 ignited at 10:30 local time and were likely finished burning by the SNPP and NOAA satellite overpasses at 13:00; the fires were likely too small for the critical sub-pixel area of extensive residual smouldering that could be detected by VIIRS [@johnstonSatelliteDetectionLimitations2018]. The single small fire at Valcartier (6 ha) did not result in any smoke sensor warnings or alerts, but did result in a VIIRS detection 163 minutes after ignition.
+
+```{r Final-summary-table, echo=FALSE, message=FALSE, warning=FALSE, tab.cap="\\label{tab:Final-summary-table}Fire detection summary across all sites, with time given in minutes since first report for wildfires, and time since the completion of ignition operations for presribed fire assuming 60 minutes of ignition operations.", echo=FALSE}
+
+##recreate the table from the WFCC:
+
+fires_list <- c("WR-08","WR-09","WR-12","WR-14","WR-15") ### shortened list of fires
+
+# %>% filter(FireName %in% fires_list) if you want to limit to the larger fires
+
+###will need to join across the time series:
+
+##
+### !!!distance of alerting sensor!!!
+###
+
+#WainwrightApr2024$TimetoFirstWarning/60
+
+### so, filter the FG time series per fire so that only the time step closest to the detection time is retained
+
+##first step, join the "TimetoFirstWarning" to the FG Time series
+
+FGM_w_detect <- FireGrowthTimeSeries %>% filter(!is.na(TimetoFirstWarning)) %>% left_join(WainwrightApr2024,by=join_by(FireName)) %>% filter(hr<TimetoFirstWarning.x/60) ##note that I'm filtering by TimetoFirstWarning.x here, duplicate name
+
+##append new variables that show the area and FRP at the time of first smoke warning
+FGM_w_detect_summary <- FGM_w_detect %>% group_by(FireName) %>% summarise(AreaAtWarning = max(A), FRPAtWarning = max(MWfrp), PlumeHatWarning = max(zHfluxm,na.rm=TRUE)) %>% select(FireName,AreaAtWarning,FRPAtWarning,PlumeHatWarning) 
+
+#units(FGM_w_detect_summary$AreaAtWarning) <- "ha"
+#units(FGM_w_detect_summary$FRPAtWarning) <- "MW"
+#units(FGM_w_detect_summary$PlumeHatWarning) <- "m"
+
+##then filter to when hr<time to detect, then take max of A and MWfrp
+
+Summary_kbl <- WainwrightApr2024 %>% select(FireName,LAT,LONG,ReportedIgnTime,ReportedFinalArea,DistToSensor,TimetoFirstWarning,TimetoFirstAlert,TimetoFirstVIIRS,TimetoFirstGOES,FirstObsFRP,x,y) %>% arrange(desc(ReportedFinalArea)) 
+
+##then join FGM_w_detect back into summary kbl
+
+Summary_kbl <- Summary_kbl %>% left_join(FGM_w_detect_summary,by=join_by(FireName))
+
+Summary_kbl$DistToSensor <- round(Summary_kbl$DistToSensor,digits=0)
+#units(Summary_kbl$TimetoFirstWarning) <- "min"
+#units(Summary_kbl$ReportedFinalArea) <- "ha"
+
+### this is now in good shape, so do the same for other sites:
+##VC
+Summary_kbl_VC <- VC2023FireReports %>% select(FireName,LAT,LONG,ReportedIgnTime,ReportedFinalArea,DistToSensor,TimetoFirstWarning,TimetoFirstAlert,TimetoFirstVIIRS,FirstObsFRP,x,y) %>% arrange(desc(ReportedFinalArea))
+
+Summary_kbl_VC$TimetoFirstGOES <- NA
+
+FGM_w_detect_VC <- FireGrowthTimeSeries_VC %>% filter(!is.na(TimetoFirstWarning)) %>% left_join(VC2023FireReports,by=join_by(FireName)) %>% filter(hr<TimetoFirstWarning.x/60) ##note that I'm filtering by TimetoFirstWarning.x here, duplicate name
+
+##append new variables that show the area and FRP at the time of first smoke warning
+FGM_w_detect_summary_VC <- FGM_w_detect_VC %>% group_by(FireName) %>% summarise(AreaAtWarning = max(A), FRPAtWarning = max(MWfrp), PlumeHatWarning = max(zHfluxm,na.rm=TRUE)) %>% select(FireName,AreaAtWarning,FRPAtWarning,PlumeHatWarning) 
+
+Summary_kbl_VC <- Summary_kbl_VC %>% left_join(FGM_w_detect_summary_VC,by=join_by(FireName))
+
+Summary_kbl_VC <- Summary_kbl_VC %>% mutate(across(c(AreaAtWarning, FRPAtWarning,PlumeHatWarning,DistToSensor), round)) %>% mutate(across(c(ReportedFinalArea), round,2))
+
+### add in the VC GOES detections as "NA" since there were none
+#### end VC
+
+## RC
+Summary_kbl_RC <- RC2024FireReports %>% select(FireName,LAT,LONG,ReportedIgnTime,ReportedFinalArea,DistToSensor,TimetoFirstWarning,TimetoFirstAlert,TimetoFirstGOES,FirstObsFRP,x,y)
+
+
+Summary_kbl_RC$TimetoFirstVIIRS <- NA
+
+FGM_w_detect_RC <- FireGrowthTimeSeries_RC %>% filter(!is.na(TimetoFirstWarning)) %>% left_join(RC2024FireReports,by=join_by(FireName)) %>% filter(hr<TimetoFirstWarning.x/60) ##note that I'm filtering by TimetoFirstWarning.x here, duplicate name
+
+##append new variables that show the area and FRP at the time of first smoke warning
+FGM_w_detect_summary_RC <- FGM_w_detect_RC %>% group_by(FireName) %>% summarise(AreaAtWarning = max(A), FRPAtWarning = max(MWfrp), PlumeHatWarning = max(zHfluxm,na.rm=TRUE)) %>% select(FireName,AreaAtWarning,FRPAtWarning,PlumeHatWarning) 
+
+Summary_kbl_RC <- Summary_kbl_RC %>% left_join(FGM_w_detect_summary_RC,by=join_by(FireName))
+
+Summary_kbl_RC <- Summary_kbl_RC %>% mutate(across(c(AreaAtWarning, FRPAtWarning,PlumeHatWarning,DistToSensor), round)) %>% mutate(across(c(ReportedFinalArea), round,2))
+##### end RC
+
+
+
+Summary_kbl <- Summary_kbl %>% mutate(across(c(AreaAtWarning, FRPAtWarning,PlumeHatWarning,DistToSensor), round)) %>% mutate(across(c(ReportedFinalArea), round,2))
+
+
+all_sites <- rbind(Summary_kbl,Summary_kbl_VC,Summary_kbl_RC)
+
+##making a temp dataframe here to pass onto the next chunk below for QGIS mapping:
+all_sites_x_y <- all_sites
+
+
+###AreaAtWarning can at times report for the single timestep where the modelled Area is greater than the final area, so constrain AreaAtWarning to <= ReportedFinalArea
+
+all_sites$AreaAtWarning <- ifelse(all_sites$AreaAtWarning>all_sites$ReportedFinalArea,all_sites$ReportedFinalArea,all_sites$AreaAtWarning)
+
+
+all_sites_kbl <- all_sites %>% rename('Distance to sensor (m)' = DistToSensor) %>% rename('Time first warning (min)' = TimetoFirstWarning) %>% rename('Time first VIIRS (min)' = TimetoFirstVIIRS) %>% rename('Time first alert (min)' = TimetoFirstAlert) %>% rename('Time first GOES (min)' = TimetoFirstGOES) %>% rename('Est. Area at warning (ha)' = AreaAtWarning) %>% rename('Est. FRP at warning (MW)' = FRPAtWarning) %>% rename('Est. Plume height at warning (m)' = PlumeHatWarning) %>% rename('Final area (ha)' = ReportedFinalArea) %>% select(-x) %>% select(-y) %>% select(-LAT) %>% select(-LONG) %>% select(-ReportedIgnTime) %>% rename('First Obs FRP (MW)' = FirstObsFRP)
+
+kbl(all_sites_kbl,align="c",digits=c(0,2,0,0,0,0,0,0,0,0,0),caption="Fire ignition and detection characteristics of each fire event, in order of decreasing final fire size in each study area.  Area, Fire Radiative Power (FRP), and plume height at warning are all estimates based on fire growth modelling.") %>% kable_minimal() %>% column_spec(1:14, width = "1.8cm") %>%
+ kable_styling(latex_options = "scale_down") %>%
+ kable_styling(latex_options = "hold_position")
+
+```
+
+```{r tab-detect-combinations, echo=FALSE, message=FALSE, warning=FALSE}
+##so the idea here is to tally the various fires by their specific combinations of detection modes, so smoke-only, smoke+VIIRS, smoke+VIIRS+GOES, etc
+```
+
+```{r data-for-QGIS-plots, message=FALSE, warning=FALSE, include=FALSE}
+
+###this dataframe has wd, wd, gsi, and also the x,y of the detecting sensor:
+all_sites_x_y_join <- inner_join(all_sites_x_y,all_fires_wx,by=join_by(FireName))
+
+write.csv(all_sites_x_y_join,"all_fires_w_wx_detction_sites.csv")
+
+```
+
+```{r all-alerts-distance-duration-calcs, message=FALSE, warning=FALSE, include=FALSE}
+
+###load up the dataframe of all the alerts and their duration (still need peak PM2.5 out of WR.csv)
+all_alerts <- read.csv("~/DRDC-smoke/all_alerts.csv")
+
+WR_PM <- read.csv("~/DRDC-smoke/WR.csv")
+WR_PM$time <- ymd_hms(WR_PM$time)
+
+##then figure out the distance between each of these "Station" and the FireName lat/long
+
+all_alerts_stn_xy <- all_alerts %>% left_join(Sensor_Locs,by=join_by(Station==Sensor.ID))
+
+###ideally will join all_sites_x_y_join instead, but for now, join the summary table for WR to this by FireName
+
+all_alerts_stn_xy_Fires <- all_alerts_stn_xy %>% left_join(Summary_kbl,by=join_by(FireName)) %>% filter(!is.na(LONG))
+
+## y.x and x.x are the sensor locations, LAT and LONG are the fire locations
+
+
+fires_sf2 <- st_as_sf(all_alerts_stn_xy_Fires,coords=c("LONG","LAT"),crs=4326,agr="identity")
+
+sensors_sf2 <- st_as_sf(all_alerts_stn_xy_Fires,coords=c("x.x","y.x"),crs=4326,agr="identity")
+
+fire_to_sensor <- st_distance(sensors_sf2,fires_sf2,by_element=TRUE)
+
+
+all_alerts_stn_xy_Fires <- all_alerts_stn_xy_Fires %>% bind_cols(fire_to_sensor)
+colnames(all_alerts_stn_xy_Fires)[ncol(all_alerts_stn_xy_Fires)] <- c("FireToSensor")
+
+###convert the provided character "Duration" column to a timespan in minutes using lubridate
+all_alerts_stn_xy_Fires$Duration <- hms(all_alerts_stn_xy_Fires$Duration)
+all_alerts_stn_xy_Fires$Duration <- as.duration(all_alerts_stn_xy_Fires$Duration)
+all_alerts_stn_xy_Fires$Duration <- as.numeric(all_alerts_stn_xy_Fires$Duration)/60
+
+###need to grab the peak PM2.5 value from WR_PM
+##first, take the all_alerts and define an interval starting at the alert time and lasting as long as the duration
+all_alerts_stn_xy_Fires$Time.Start <- ymd_hm(all_alerts_stn_xy_Fires$Time.Start)
+all_alerts_stn_xy_Fires$Time.End <- ymd_hm(all_alerts_stn_xy_Fires$Time.End)
+
+all_alerts_stn_xy_Fires <- all_alerts_stn_xy_Fires %>% mutate(alert_interval = interval(Time.Start,Time.End))
+
+###lazy loop here, having trouble going through each row-wise otherwise.....
+
+PM2P5_max <- rep(NA,times=nrow(all_alerts_stn_xy_Fires))
+
+for (i in seq(1:nrow(all_alerts_stn_xy_Fires))){
+PM2P5_max[i] <- WR_PM %>% filter(time %within% all_alerts_stn_xy_Fires$alert_interval[i]) %>% filter(stationID == all_alerts_stn_xy_Fires$Station[i]) %>% summarize(PM2P5_max = max(PM2P5))}
+
+PM2P5_max <- t(as.data.frame(PM2P5_max))
+
+
+all_alerts_stn_xy_Fires <- cbind(all_alerts_stn_xy_Fires,PM2P5_max)
+
+### add a field for the aler hour, to optionally plot by
+all_alerts_stn_xy_Fires <- all_alerts_stn_xy_Fires %>% mutate(AlertHour = hour(Time.Start))
+
+###############
+###alternatively, could compute a sum of PM2.5-hours
+##############
+
+##a few other plots not worth including
+#ggplot(data=all_alerts_stn_xy_Fires) + geom_point(aes(FireToSensor,Duration,size=PM2P5_max))
+
+#ggplot(data=all_alerts_stn_xy_Fires) + geom_point(aes(FireToSensor,Duration))
+
+#ggplot(data=all_alerts_stn_xy_Fires) + geom_point(aes(FireToSensor,Duration,colour=AlertHour)) + scale_color_viridis_c()
+
+##one I'm going with for now, show's nicely the decline in the max PM 2.5 peak as you head further away
+
+### needs just day/night colour scheme not continous hours
+
+### provide a discrete colourscale for AlertHour
+
+###first create a new column that is just AlertHour binned into day/night:
+all_alerts_stn_xy_Fires <- all_alerts_stn_xy_Fires %>% mutate(DayNight = case_when(
+  AlertHour<6 ~ "night",
+  AlertHour>21 ~ "night",
+  .default = "day"
+  ))
+
+##remove units from all_alerts_stn_xy_Fires data frame
+
+all_alerts_stn_xy_Fires$FireToSensor <-  as.integer(all_alerts_stn_xy_Fires$FireToSensor)
+all_alerts_stn_xy_Fires$PM2P5_max <-  as.integer(all_alerts_stn_xy_Fires$PM2P5_max)
+
+ggplot(data=all_alerts_stn_xy_Fires) + geom_point(aes(FireToSensor,PM2P5_max,colour=DayNight,size=Duration)) +  scale_colour_manual(values = c("#5bd1de", "#643896")) + scale_y_log10()+ annotation_logticks(sides = "l") + labs(
+    x = "Distance to sensor [m]",
+    y = bquote(paste(PM[2.5], " max"))) + theme_bw()#
+ #+ scale_y_continuous(labels = scales::comma_format()) + scale_x_continuous(labels = scales::comma_format())
+#+ scale_x_continuous(labels = comma) +  scale_y_continuous(labels = comma) #these don't work because of units package
+
+ggsave("WR_all_alerts.png",height=6,width=8,units=c("in"))
+
+
+```
+
+```{r WR_all_alerts, echo=FALSE, fig.cap="\\label{fig::WR_all_alerts}Biplot of distance from sensor to fire compared to peak PM~2.5~ concentration by detection event.  Events are coloured by the hour of the start of the detection. Data for the Wainwright study area only.", out.width="95%", message=FALSE, warning=FALSE}
+
+knitr::include_graphics("WR_all_alerts.png")
+
+
+```
+
+```{r plot-MW, eval=FALSE, fig.cap="Modelled Fire Radiative Power over time for fires until the estimated time of the completion of burning. Horizontal lines show the approximate lower limit of the GOES and VIIRS sensor detection.", message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+
+## basic area over time graph
+
+###also need to add a little dot for when you had smoke sensor and also VIIRS/GOES detections per fire
+#ggplot(FireGrowthTimeSeries,aes(hr,A,colour=FireName))+geom_line()
+
+##needs geom_repel
+
+MwThresholds <- data.frame(
+ hr = c(100/60,100/60),
+ MW = c(1.2,105),
+ #FireName = c("VIIRS Threshold (12-hour scan interval)","GOES Threshold (10 min scan interval)")
+ FireName = c("VIIRS Theoretical","GOES Theoretical"),
+ site=c("","")
+)
+
+### need to show that MW=0 at time = 0 as well, perhaps add in another row for each FireName here, but....
+
+###do this across all the sites:
+
+FireGrowthTimeSeries$site <- "WR"
+FireGrowthTimeSeries$site <- as.factor(FireGrowthTimeSeries$site)
+FireGrowthTimeSeries_RC$site <- "RC"
+FireGrowthTimeSeries_VC$site <- "VC"
+
+###need to left_join the Warning and Alert times to this data frame:
+
+
+
+FireGrowthTimeSeries_merged <- rbind(FireGrowthTimeSeries,FireGrowthTimeSeries_VC,FireGrowthTimeSeries_RC)
+
+p1 <- ggplot(data=FireGrowthTimeSeries_merged %>% filter(site=="WR") %>% filter(ReportedFinalArea>=1),aes(hr*60,MWfrp,label=FireName,colour=FireName))+geom_line() + scale_y_log10() + annotation_logticks(sides = "l") + geom_hline(aes(yintercept=1),linetype=2) + geom_hline(aes(yintercept=80),linetype=3)+ scale_x_continuous(breaks = seq(0, 180, by = 10))+ geom_text(data=MwThresholds,aes(hr*60,MW,label = FireName)) + ylab("Fire Radiative Power (MW)") + theme(legend.position = "none") + geom_label_repel(aes(label = paste0(FireName,": GSI ",round(gsi,digits=0)),colour=FireName), data = FireGrowthTimeSeries_merged %>% filter(year(time)>=2024) %>% filter(hr == max(hr) & ReportedFinalArea>=1), nudge_x = -0.35,size = 4)+ geom_point(data=all_sites %>% filter(LAT>50) %>% filter(TimetoFirstWarning<180) %>% filter(ReportedFinalArea>50),aes(TimetoFirstWarning,FRPAtWarning)) + theme_bw()
+
+
+
+###now with a dot when the first warning happens, larger diamond when first alert
+
+###also need a symbol for time at 0.2 ha
+
+p2 <- ggplot(data=FireGrowthTimeSeries_merged %>% filter(ReportedFinalArea>=1) %>% filter(A<ReportedFinalArea) %>% filter(site=="VC" | site=="RC"),aes(hr*60,MWfrp,label=FireName,colour=FireName))+geom_line() + scale_y_log10() + annotation_logticks(sides = "l") + geom_hline(aes(yintercept=1),linetype=2) + geom_hline(aes(yintercept=80),linetype=3)+ scale_x_continuous(breaks = seq(0, 180, by = 10))+ geom_text(data=MwThresholds,aes(hr*60,MW,label = FireName)) + xlab("Time since reported ignition (minutes)") + ylab("Fire Radiative Power (MW)") + theme(legend.position = "none") + geom_label_repel(aes(label = paste0(FireName,": GSI ",round(gsi,digits=0)),colour=FireName), data = FireGrowthTimeSeries_merged %>% filter(hr == max(hr) & ReportedFinalArea>=1) %>% filter(A<ReportedFinalArea*1.3) %>% filter(site=="VC" | site=="RC"), nudge_x = -0.35,size = 4) + geom_point(data=all_sites %>% filter(LAT<50) %>% filter(TimetoFirstWarning<180) %>% filter(ReportedFinalArea>50),aes(TimetoFirstWarning,FRPAtWarning)) + theme_bw()
+
+
+p1/p2
+
+ggsave("plot-MW.png",height=8,width=8,units=c("in"))
+
+```
+
+```{r Fig5-plot-MW, eval=FALSE, fig.cap="\\label{fig::Fig5-plot-MW}Modelled fire radiative power over time as compared to fire detection times by various modes.", message=FALSE, warning=FALSE, include=FALSE, out.width="75%"}
+knitr::include_graphics("~/DRDC-smoke/plot-MW.png")
+
+```
+
+## Monitoring of sustained smoke production
+
+In addition to the first detection, the smoke sensors produced useful information on the sustained production of ground-level smoke in the hours after ignition and growth of the prescribed and wildfires. Smoke detection events were registered at Wainwright up to 17 km from the fire area, at concentrations over 100 ug/m^3^ (Figure \ref{fig:WR_all_alerts}). Smoke event observations the most distant from the fire were typically made after sunset through the early morning, and had a lower peak PM~2.5~ of less than 300 ug/m^3^. Afternoon smoke event observations made near the peak of the daily burning conditions (highest temperature and winds, lowest humidity) were confined to a distance of less than 2.5 km typically, and only in these observations within 2.5 km were PM~2.5~ concentrations in excess of 300 ug/m^3^ observed. Interestingly, short duration and low concentration (\<50 ug/m^3^ smoke events) were only observed at distances of 5 km or less; smoke events observed further afield were both of longer duration and higher concentration.
+
+## Estimating visual detection range
+
+At the time of the smoke sensor warning, the modelled plume top-heights where between 400 and 1,600 m above the ground. Against a high-contrast blue sky, such features are likely visible at a limit approaching the maximum aeronautical visibility range of 50--60 km, as supported by an analysis of detection distances by human observers from fire towers (see Supplementary Materials). Under widespread regional smoke or overcast conditions, the visual contrast between a smoke plume can diminish, and thus reduce the detection distance [@victorSimpleMethodPredicting1977]. Larger, more intense fires that are beyond suppression resources often feature darker (and larger) smoke columns [@stackInfluenceAirborneOcularly2024] which aids in the visual detection process for incidental ground-based observers. In Canada, fixed-wing dedicated fire detection [@foster1962; @mcfaydenRiskAssessmentWildland2019] uses human observers, and benefits from the visual contrast of typically light coloured smoke against a dark forest canopy background. Ideally, initial fire detections are made when the fire is a small sub-canopy surface fire, which reduces the ability of fixed-wing or satellite fire infrared detection due to canopy interception of infrared energy [@johnston2018].
+
+## Regional smoke false positives from smoke sensors
+
+In June of 2023, extensive regional smoke from wildfires 300--500 km upwind to the west in central Quebec severely impacted local particulate concentrations at the Valcartier deployment [@matz2025; @boulanger2024]. This far-field smoke source caused system warnings and alerts that were valid at the instrument level, but the smoke source was from very large and very well-observed fires that were being heavily suppressed. This smoke emission is well predicted in advance and in real-time using operational air quality forecasting systems that incorporate satellite fire detection and smoke dispersion schemes such as @chenFireWorkV20Air2019.
+
+# Conclusions
+
+Continuous air quality sensors with telemetry were deployed in advance of prescribed fire operations at a number of locations across Canada. A total of 20 prescribed and wildfires occurred in the vicinity of the sensor network, and in 6 of the 10 largest fires, the ground-based smoke sensor network provided superior time to first detection compared to satellite observations by polar orbiting and geostationary platforms. Given the densely populated locations, visual detection by observers (fire response agency or public) would have been rapid due the quick fire acceleration and large resultant smoke plumes. The smoke sensor network provided valuable information on sustained night-time fire smouldering activity, with residual flaming and smouldering resulting in smoke plumes which that travelled upwards of 10 km at night and at smoke concentrations far in excess of ambient levels, providing a clear detection signal. Satellite geostationary sensors were largely unable to detect overnight activity due to very low fire radiative power, while polar orbiting sensors provide only a handful of observations overnight and only under cloud-free conditions. Such ground-based smoke monitoring may fill a niche in fire detection and monitoring under the following conditions: (1) the absence of visual observers of smoke plumes (dedicated staff, camera tower systems, or the public), (2) frequent continuous cloud that obscures satellite observations of fire, (3) a relatively dense sensor spacing on the order of kilometres, (4) low-intensity fire typical of residual flaming and smouldering without active fire area growth, and (5) night-time or overcast conditions that greatly limit the visibility of the smoke plume in the sky. This night-time monitoring function of the smoke sensor networks appears to be particularly suited to this type of instrumentation, and fulfills a niche in the continuous monitoring of contained or extinguished fires.
+
+# Acknowledgements
+
+The authors would like to thank Jeffrey Booth from the United States DHS(S&T) for initiating the collaboration with the Canadian DND for the testing of the sensors. We would also like to thank Mr. Booth for funding the sensors used for the results in this paper and for funding technical and logistical support from the vendors. We also acknowledge the contribution of the Canadian Safety and Security Program to develop the testing and evaluation of the sensors in Canada. We would like to thank the smoke sensors vendors N5, Inc., especially Debra Deinenger, Robins George and Rudy Villegas for their support.
+
+We would also like to thank Andrew Loulousis and his team at TechNexus Venture Collaborative for logistical organization and support of the bilateral US/CAN collaboration and sensor deployments. We would like to thank Maj. Lavigne and Sargeant-Major (ret’d) Steve Noiseux and their team at CFB Valcartier for their excellent support in installing the sensors there, as well as the late Robert Prospero, Mark Batten, Sgt Korosi and his team at the CF Detachment Wainwright for their excellent support in the installation at that location. Finally, we would like to thank Olivier Lundqvist, Luc Carrière and Christine Bussières at SOPFEU; and Samuel Siddall, Neal McLoughlin, Andrew Simpson and Ash Richardson and their colleagues at the BCWS for their support in this initiative.
+
+\clearpage

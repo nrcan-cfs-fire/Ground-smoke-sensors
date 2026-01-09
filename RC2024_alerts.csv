@@ -1,0 +1,35 @@
+Station,Code,Context,Count,Time Start,Time End,Duration
+aa-87-14-19,Fire Warning,WARNING Discrepancy and PM,143,2024-09-17 11:37,2024-09-17 15:14,3:37:27
+aa-02-84-17,Fire Warning,WARNING Discrepancy and PM,617,2024-09-17 13:05,2024-09-17 21:22,8:17:23
+aa-02-83-43,Fire Warning,WARNING Discrepancy and PM,438,2024-09-17 13:19,2024-09-17 16:59,3:40:09
+aa-87-15-44,Fire Warning,WARNING Discrepancy and PM,64,2024-09-17 16:05,2024-09-17 16:35,0:29:06
+aa-22-21-92,Fire Warning,WARNING Discrepancy and PM,33,2024-09-17 16:15,2024-09-17 16:25,0:10:14
+aa-02-84-17,Air Quality,Particulates,59,2024-09-17 19:20,2024-09-17 19:38,0:17:38
+aa-02-84-17,Fire Alert,ALERT Discrepancy and PM,58,2024-09-17 19:21,2024-09-17 19:39,0:17:20
+aa-22-22-33,Fire Warning,WARNING Discrepancy and PM,26,2024-09-17 19:30,2024-09-17 19:38,0:08:03
+aa-87-14-19,Fire Warning,WARNING Discrepancy and PM,20,2024-09-19 11:22,2024-09-19 11:27,0:05:00
+aa-87-15-44,Fire Warning,WARNING Discrepancy and PM,31,2024-09-19 17:55,2024-09-19 18:04,0:08:57
+aa-02-85-04,Fire Warning,WARNING Discrepancy and PM,52,2024-09-19 18:51,2024-09-19 19:05,0:14:48
+aa-02-84-45,Fire Warning,WARNING Discrepancy and PM,49,2024-09-19 18:54,2024-09-19 19:18,0:23:51
+aa-02-84-55,Fire Warning,WARNING Discrepancy and PM,544,2024-09-19 22:10,2024-09-20 2:16,4:06:28
+aa-02-85-04,Fire Warning,WARNING Discrepancy and PM,154,2024-09-19 22:15,2024-09-19 23:01,0:45:17
+aa-02-84-55,Fire Alert,ALERT Discrepancy and PM,18,2024-09-20 1:01,2024-09-20 1:07,0:06:00
+aa-02-84-17,Fire Warning,WARNING Discrepancy and PM,369,2024-09-20 3:57,2024-09-20 9:41,5:43:46
+aa-02-84-55,Fire Warning,WARNING Discrepancy and PM,791,2024-09-20 5:38,2024-09-20 13:49,8:10:32
+aa-02-85-04,Fire Warning,WARNING Discrepancy and PM,220,2024-09-20 6:30,2024-09-20 7:36,1:05:21
+aa-02-85-04,Fire Alert,ALERT Discrepancy and PM,63,2024-09-20 6:43,2024-09-20 7:05,0:21:47
+aa-02-84-45,Fire Warning,WARNING Discrepancy and PM,138,2024-09-20 6:46,2024-09-20 7:28,0:41:30
+aa-02-84-45,Fire Alert,ALERT Discrepancy and PM,40,2024-09-20 6:56,2024-09-20 7:09,0:12:43
+aa-02-84-45,Air Quality,Particulates,16,2024-09-20 7:03,2024-09-20 7:08,0:04:32
+aa-87-14-19,Fire Warning,WARNING Discrepancy and PM,88,2024-09-20 12:59,2024-09-20 15:12,2:12:54
+aa-02-84-45,Fire Warning,WARNING Discrepancy and PM,183,2024-09-21 1:18,2024-09-21 2:14,0:55:17
+aa-02-85-04,Fire Warning,WARNING Discrepancy and PM,170,2024-09-21 1:22,2024-09-21 2:12,0:50:32
+aa-02-84-45,Air Quality,Particulates,78,2024-09-21 1:35,2024-09-21 1:58,0:23:23
+aa-02-84-55,Fire Warning,WARNING Discrepancy and PM,15,2024-09-21 1:47,2024-09-21 1:51,0:04:14
+aa-87-14-19,Fire Warning,WARNING Discrepancy and PM,41,2024-09-21 14:23,2024-09-21 14:33,0:10:30
+aa-87-14-19,Fire Alert,ALERT Discrepancy and PM,1,2024-09-21 14:31,2024-09-21 14:31,0:00:00
+aa-02-83-06,Fire Warning,WARNING Discrepancy and PM,124,2024-09-21 14:52,2024-09-21 15:28,0:36:09
+aa-02-84-45,Fire Warning,WARNING Discrepancy and PM,40,2024-09-21 14:57,2024-09-21 16:54,1:57:03
+aa-99-81-53,Fire Warning,WARNING Discrepancy and PM,61,2024-09-21 15:02,2024-09-21 15:26,0:24:07
+aa-02-85-04,Fire Warning,WARNING Discrepancy and PM,107,2024-09-21 21:31,2024-09-21 22:02,0:31:08
+aa-02-84-45,Fire Warning,WARNING Discrepancy and PM,30,2024-09-21 21:50,2024-09-21 22:00,0:10:28
