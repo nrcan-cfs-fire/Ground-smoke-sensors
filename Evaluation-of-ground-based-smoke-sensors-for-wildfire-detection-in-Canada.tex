@@ -330,23 +330,31 @@ The utility of geostationary fire detection in Canada's agricultural
 regions that also lie outside of formalized wildfire protection regions
 is unknown, but likely carries a similar utility.
 
-To date, distributed wireless small-sensor networks of smoke and/or
-thermal detectors have not been operationally deployed in Canada. Such
-systems have been proposed in other jurisdictions
-\citep[e.g.][]{sonDesignImplementationForestFires2006} with primarily
-theoretical and simulation evaluation of such systems
-\citep[e.g.][]{sernaDistributedForestFire2015}. With the recent
-availability of commercial vendors making such distributed small sensor
-systems available to communities or fire management agencies, an field
-evaluation of smoke-detecting ground wildfire sensors was conducted
-through the 2023 and 2024 seasons during prescribed burns as well as
-incidental wildfires at three locations in varying terrain across
-Canada. All fires consisted of primary grass fuels with some shrubs and
-sparse trees. Ground-based fire detection records were compared to a
-proxy for human visual detection (smoke plume height) as well as
-satellite fire detection records. Data on ignition time, fire weather,
-and final fire size were used in conjunction with standard fire growth
-models to estimate fire size and activity at varying detection
+Intense fires under light wind conditions can often lead to little to no
+local smoke impacts due to efficient lofting of smoke within a large
+fire convective plume; lighter fuels and stronger winds yields large
+impacts to local air quality and even highway safety due to ground-level
+smoke \citep{brambilla2025}. To date, distributed wireless small-sensor
+networks of smoke and/or thermal detectors have not been operationally
+deployed in Canada to use these ground-level smoke events as fire
+detection systems. Such systems have been proposed in other
+jurisdictions \citep[e.g.][]{sonDesignImplementationForestFires2006}
+with primarily theoretical and simulation evaluation of such systems
+\citep[e.g.][]{sernaDistributedForestFire2015}. Multi-sensor approaches
+have been shown to be effective under moderate burning conditions in
+grass fuels, with smoke particulate, organic gases, and thermal
+detection approaches being the most effective \citep{chwalek2023}. With
+the recent availability of commercial vendors making such distributed
+small sensor systems available to communities or fire management
+agencies, an field evaluation of smoke-detecting ground wildfire sensors
+was conducted through the 2023 and 2024 seasons during prescribed burns
+as well as incidental wildfires at three locations in varying terrain
+across Canada. All fires consisted of primary grass fuels with some
+shrubs and sparse trees. Ground-based fire detection records were
+compared to a proxy for human visual detection (smoke plume height) as
+well as satellite fire detection records. Data on ignition time, fire
+weather, and final fire size were used in conjunction with standard fire
+growth models to estimate fire size and activity at varying detection
 intervals.
 
 \section{Methods}\label{methods}
@@ -787,19 +795,22 @@ In addition to the first detection, the smoke sensors produced useful
 information on the sustained production of ground-level smoke in the
 hours after ignition and growth of the prescribed and wildfires. Smoke
 detection events were registered at Wainwright up to 17 km from the fire
-area, at concentrations over 100 ug/m\textsuperscript{3} (Figure
-\ref{fig:WR_all_alerts}). Smoke event observations the most distant from
-the fire were typically made after sunset through the early morning, and
-had a lower peak PM\textsubscript{2.5} of less than 300
+area, at concentrations as high as 5,000 ug/m\textsuperscript{3} (Figure
+\ref{fig:WR_all_alerts}). Concentrations of PM\textsubscript{2.5} have
+been registered as high as 20,000 ug/m\textsuperscript{3} at the
+immediate perimeter of fires by similar ground-based sensor packages by
+\citep{chwalek2023}. Smoke event observations the most distant from the
+fire were typically made after sunset through the early morning, and had
+a lower peak PM\textsubscript{2.5} of less than 800
 ug/m\textsuperscript{3}. Afternoon smoke event observations made near
 the peak of the daily burning conditions (highest temperature and winds,
 lowest humidity) were confined to a distance of less than 2.5 km
 typically, and only in these observations within 2.5 km were
 PM\textsubscript{2.5} concentrations in excess of 300
-ug/m\textsuperscript{3} observed. Interestingly, short duration and low
-concentration (\textless50 ug/m\textsuperscript{3} smoke events) were
-only observed at distances of 5 km or less; smoke events observed
-further afield were both of longer duration and higher concentration.
+ug/m\textsuperscript{3} observed. Short duration and low concentration
+(\textless50 ug/m\textsuperscript{3} smoke events) were only observed at
+distances of 5 km or less; smoke events observed closer were both of
+longer duration and higher concentration.
 
 \subsection{Estimating visual detection
 range}\label{estimating-visual-detection-range}
@@ -809,14 +820,14 @@ where between 400 and 1,600 m above the ground. Against a high-contrast
 blue sky, such features are likely visible at a limit approaching the
 maximum aeronautical visibility range of 50--60 km, as supported by an
 analysis of detection distances by human observers from fire towers (see
-Supplementary Materials). Under widespread regional smoke or overcast
-conditions, the visual contrast between a smoke plume can diminish, and
-thus reduce the detection distance
-\citep{victorSimpleMethodPredicting1977}. Larger, more intense fires
-that are beyond suppression resources often feature darker (and larger)
-smoke columns \citep{stackInfluenceAirborneOcularly2024} which aids in
-the visual detection process for incidental ground-based observers. In
-Canada, fixed-wing dedicated fire detection
+Figure A3). Under widespread regional smoke or overcast conditions, the
+visual contrast between a smoke plume can diminish, and thus reduce the
+detection distance \citep{victorSimpleMethodPredicting1977}. Larger,
+more intense fires that are beyond suppression resources often feature
+darker (and larger) smoke columns
+\citep{stackInfluenceAirborneOcularly2024} which aids in the visual
+detection process for incidental ground-based observers. In Canada,
+fixed-wing dedicated fire detection
 \citep{foster1962, mcfaydenRiskAssessmentWildland2019} uses human
 observers, and benefits from the visual contrast of typically light
 coloured smoke against a dark forest canopy background. Ideally, initial
@@ -915,14 +926,14 @@ experiments; G.F. performed the experiments; D.K.T and P.J. analyzed the
 data; D.K.T. and G.F. wrote the paper.}
 
 \funding{The United States Department of Homeland Security purchased the
-sensors from the vendor, and provided in-kind support for travel and
-sensor deployment operations.}
+sensors from the vendor, and provided support for travel and sensor
+deployment operations.}
 
 
 
-\dataavailability{Hotspot tabular data and corresponding daytime visible
-imagery are available at {[}\textbf{\emph{{[}Insert in progress Zenodo
-record{]}}}{]}}
+\dataavailability{All the data required to reproduce the analysis, as
+well as the RMarkdown build files, is available at
+\url{https://doi.org/10.5281/zenodo.18202275}.}
 
 
 \conflictsofinterest{The authors declare no conflict of interest.}
