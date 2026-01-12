@@ -28,9 +28,9 @@ keywords: |
 authorcontributions: |
   D.K.T. and G.F. conceive and designed the experiments; G.F. performed the experiments; D.K.T and P.J. analyzed the data; D.K.T. and G.F. wrote the paper.
 funding: |
-  The United States Department of Homeland Security purchased the sensors from the vendor, and provided in-kind support for travel and sensor deployment operations.
+  The United States Department of Homeland Security purchased the sensors from the vendor, and provided support for travel and sensor deployment operations.
 dataavailability: |
-  Hotspot tabular data and corresponding daytime visible imagery are available at [***[Insert in progress Zenodo record]***]
+  All the data required to reproduce the analysis, as well as the RMarkdown build files, is available at https://doi.org/10.5281/zenodo.18202275.
 conflictsofinterest: |
   The authors declare no conflict of interest.
 supplementary: |
