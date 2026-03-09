@@ -1,4 +1,7 @@
 %  LaTeX support: latex@mdpi.com
+%DIF LATEXDIFF DIFFERENCE FILE
+%DIF DEL C:\Users\thomp\Downloads\submitted.tex   Mon Mar  9 11:22:58 2026
+%DIF ADD C:\Users\thomp\Downloads\revisions.tex   Mon Mar  9 12:04:17 2026
 %  For support, please attach all files needed for compiling as well as the log file, and specify your operating system, LaTeX version, and LaTeX editor.
 
 %=================================================================
@@ -222,6 +225,45 @@ monitor fires considered recently extinguished.}
 \usepackage[normalem]{ulem}
 \usepackage{makecell}
 \usepackage{xcolor}
+%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF
+%DIF UNDERLINE PREAMBLE %DIF PREAMBLE
+\RequirePackage[normalem]{ulem} %DIF PREAMBLE
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
+\providecommand{\DIFdel}[1]{{\protect\color{red}\sout{#1}}} %DIF PREAMBLE
+%DIF SAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddbegin}{} %DIF PREAMBLE
+\providecommand{\DIFaddend}{} %DIF PREAMBLE
+\providecommand{\DIFdelbegin}{} %DIF PREAMBLE
+\providecommand{\DIFdelend}{} %DIF PREAMBLE
+\providecommand{\DIFmodbegin}{} %DIF PREAMBLE
+\providecommand{\DIFmodend}{} %DIF PREAMBLE
+%DIF FLOATSAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddFL}[1]{\DIFadd{#1}} %DIF PREAMBLE
+\providecommand{\DIFdelFL}[1]{\DIFdel{#1}} %DIF PREAMBLE
+\providecommand{\DIFaddbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFaddendFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelendFL}{} %DIF PREAMBLE
+%DIF COLORLISTINGS PREAMBLE %DIF PREAMBLE
+\RequirePackage{listings} %DIF PREAMBLE
+\RequirePackage{color} %DIF PREAMBLE
+\lstdefinelanguage{DIFcode}{ %DIF PREAMBLE
+%DIF DIFCODE_UNDERLINE %DIF PREAMBLE
+  moredelim=[il][\color{red}\sout]{\%DIF\ <\ }, %DIF PREAMBLE
+  moredelim=[il][\color{blue}\uwave]{\%DIF\ >\ } %DIF PREAMBLE
+} %DIF PREAMBLE
+\lstdefinestyle{DIFverbatimstyle}{ %DIF PREAMBLE
+	language=DIFcode, %DIF PREAMBLE
+	basicstyle=\ttfamily, %DIF PREAMBLE
+	columns=fullflexible, %DIF PREAMBLE
+	keepspaces=true %DIF PREAMBLE
+} %DIF PREAMBLE
+\lstnewenvironment{DIFverbatim}[1][]{\lstset{style=DIFverbatimstyle}}{} %DIF PREAMBLE
+\lstnewenvironment{DIFverbatim*}[1][]{\lstset{style=DIFverbatimstyle,showspaces=true}}{} %DIF PREAMBLE
+\lstset{extendedchars=\true,inputencoding=utf8}
+
+%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
 
 \begin{document}
 
@@ -344,18 +386,19 @@ with primarily theoretical and simulation evaluation of such systems
 have been shown to be effective under moderate burning conditions in
 grass fuels, with smoke particulate, organic gases, and thermal
 detection approaches being the most effective \citep{chwalek2023}.
+\DIFaddbegin 
 
-With the recent availability of commercial vendors making such
+\DIFaddend With the recent availability of commercial vendors making such
 distributed small sensor systems available to communities or fire
-management agencies, n field evaluation of smoke-detecting ground
+management agencies, \DIFdelbegin \DIFdel{a}\DIFdelend n field evaluation of smoke-detecting ground
 wildfire sensors was conducted through the 2023 and 2024 seasons during
 prescribed burns as well as incidental wildfires at three locations in
-varying terrain across Canada. This study represents the first large
+varying terrain across Canada. \DIFaddbegin \DIFadd{This study represents the first large
 field deployment and assessment of ground-based smoke detection sensors
 across multiple prescribed and wildfires with a fixed network
 (i.e.~sensors not redeployed around each fire). Thus, this deployment
 simulates the case where dense sensor network deployment is used as part
-of a fire detection and monitoring program. All fires consisted of
+of a fire detection and monitoring program. }\DIFaddend All fires consisted of
 primary grass fuels with some shrubs and sparse trees. Ground-based fire
 detection records were compared to a proxy for human visual detection
 (smoke plume height) as well as satellite fire detection records. Data
@@ -427,22 +470,26 @@ total burned area allows for characterization of the fire for comparison
 with other methods of detection.
 
 Ground sensors detect particulate matter (PM) and volatile organic
-compound (VOC) concentrations, and report data every 5 minutes. PM and
+compound (VOC) concentrations, and report data every 5 minutes. \DIFaddbegin \DIFadd{PM and
 VOC sensors offer an advantage over CO and CH4 sensors via multi-channel
 data that allows for sensor diagnostics (i.e.~concentration ratio
 between the size classes PM\textsubscript{2.5} and
 PM\textsubscript{10}). Additionally, PM emissions are most closely
-related to both human health impacts \citep{matz2026} as well as fire
+related to both human health impacts \mbox{%DIFAUXCMD
+\citep{matz2026} }\hskip0pt%DIFAUXCMD
+as well as fire
 suppression operations challenges related to reduced visibility due to
-wildfire smoke \citep{brambilla2025}. Sensors are powered by solar
+wildfire smoke \mbox{%DIFAUXCMD
+\citep{brambilla2025}}\hskip0pt%DIFAUXCMD
+. }\DIFaddend Sensors are powered by solar
 panels and communicate via LTE wireless protocol. Best deployed at a
 height of greater than 3 m (trees or utility poles). Warnings (first
 detection with a lower threshold) or Alerts (higher threshold) are sent
 out by the sensors if these concentrations pass a certain threshold
 determined by vendor-provided algorithms; warnings are approximated by
 PM\textsubscript{2.5} observations exceeding 30
-\(\mu\)g/m\textsuperscript{3} and alerts as observations exceeding 200
-\(\mu\)g/m\textsuperscript{3}. A web portal allowed stakeholders to
+\DIFdelbegin \DIFdel{ug}\DIFdelend \DIFaddbegin \DIFadd{\(\mu\)g}\DIFaddend /m\textsuperscript{3} and alerts as observations exceeding 200
+\DIFdelbegin \DIFdel{ug}\DIFdelend \DIFaddbegin \DIFadd{\(\mu\)g}\DIFaddend /m\textsuperscript{3}. A web portal allowed stakeholders to
 monitor sensor status and receive text notifications for the wildfire
 ignitions Warnings and Alerts. The focus of this work is on the applied
 utility of the sensor network for small and localized smoke events; the
@@ -462,36 +509,49 @@ Ground-based smoke sensor observations were compared to other more
 common detection modes, namely (1) visual detection (both public and
 fire agency) as well as (2) polar orbiting satellites for detection of
 smaller and smouldering fires, and (3) geostationary fire detection for
-large and fast-growing fires. Visual detection potential was estimated
-using two model used in conjunction: modelled fire growth and energy
-output from the Canadian Forest Fire Behaviour Prediction System
+large and fast-growing fires. Visual detection potential was \DIFdelbegin \DIFdel{assessed
+using the }\DIFdelend \DIFaddbegin \DIFadd{estimated
+using two model used in conjunction: }\DIFaddend modelled fire growth \DIFaddbegin \DIFadd{and energy
+output }\DIFaddend from the Canadian Forest Fire Behaviour Prediction System
 \citep{forestrycanadafiredangerratinggroup1992}, coupled to the widely
 used plume rise model from Briggs that can be applied to small to medium
-sized fires \citep{tory2018}. Since detailed fire growth records over
+sized fires \citep{tory2018}. \DIFaddbegin \DIFadd{Since detailed fire growth records over
 time were not available, fire ignition records and hourly weather were
 used to drive the fire ignition until the final recorded area was
 achieved by the model. Fire growth modelling estimates with nearby
 weather observations are typically accurate within 20\% of observations
-\citep{taylor2018}, with similar accuracy in models of FRP and plume
+\mbox{%DIFAUXCMD
+\citep{taylor2018}}\hskip0pt%DIFAUXCMD
+, with similar accuracy in models of FRP and plume
 heights, resulting in a larger, compounded error rates of approximately
-40\% for those estimates. The relationship between plume rise height,
+40\% for those estimates. }\DIFaddend The relationship between plume rise height,
 diameter, and detection distance is not robustly understood; historical
 records indicate visual detection of forest fires \textless1 ha is
-possible well over 25 km given clear line of sight and favourable
-atmospheric conditions (see Appendix F). Thus, any comparison to plume
+possible \DIFdelbegin \DIFdel{upwards of }\DIFdelend \DIFaddbegin \DIFadd{well over }\DIFaddend 25 km given clear line of sight and favourable
+atmospheric conditions (see Appendix F). \DIFdelbegin \DIFdel{Fire radiative power over time as a function of fire growth was also
+estimated for each fire using the same fire growth models from
+\mbox{%DIFAUXCMD
+\citep{forestrycanadafiredangerratinggroup1992} }\hskip0pt%DIFAUXCMD
+as were used in plume
+rise estimates (see Appendix F). Fire radiative power estimate over time
+were made assuming 17\% of instantaneous total area-wise fire intensity
+is released as infrared radiation, following field-scale observations in similar fuels by \mbox{%DIFAUXCMD
+\citep{johnstonDirectEstimationByrams2017}}\hskip0pt%DIFAUXCMD
+}\DIFdelend \DIFaddbegin \DIFadd{Thus, any comparison to plume
 heights is merely for reference, as visual detection modes are very
-efficient in populated areas.
+efficient in populated areas}\DIFaddend .
 
 Satellite detection records (both polar orbiting and geostationary) for
 each individual fire event were obtained from the NASA FIRMS archive
 \citep{hewson2024}. A qualitative assessment of cloud cover for daytime
 periods was accessed via the NASA Worldview service for the satellite
 overpasses during fire events (including those without satellite
-detection). For each fire, the ground-reported ignition time (both
+detection). \DIFaddbegin \DIFadd{For each fire, the ground-reported ignition time (both
 wildfire and prescribed fire) was available with precision down to the
 minute from fire management records. The reported ignition time was then
 used as time zero each event, with fire growth and detection events
 calculated as minutes since ignition.
+}\DIFaddend 
 
 \begin{table}[!h]
 \centering\centering\centering
@@ -572,11 +632,11 @@ to moderate winds \citep{hudaStudyFuelSmokeDynamics2020}.
 
 For the 500 ha WR-14 prescribed fire, the southerly winds and large
 ignition area allowed the rapid detection of the WR-14 fire, which
-experienced a rapid increase from ambient PM\textsubscript{2.5}
-concentrations of \textless10 \(\mu\)g/m\textsuperscript{3} to 3,260
-\(\mu\)g/m\textsuperscript{3} at a sensor location 1.8 km downwind. PM
+experienced a rapid increase from ambient \DIFdelbegin \DIFdel{PM2.5 }\DIFdelend \DIFaddbegin \DIFadd{PM\textsubscript{2.5}
+}\DIFaddend concentrations of \textless10 \DIFdelbegin \DIFdel{ug}\DIFdelend \DIFaddbegin \DIFadd{\(\mu\)g}\DIFaddend /m\textsuperscript{3} to 3,260
+\DIFdelbegin \DIFdel{ug}\DIFdelend \DIFaddbegin \DIFadd{\(\mu\)g}\DIFaddend /m\textsuperscript{3} at a sensor location 1.8 km downwind. PM
 concentrations continued to be elevated above 100
-\(\mu\)g/m\textsuperscript{3} for an additional 4 hours. GOES fire
+\DIFdelbegin \DIFdel{ug}\DIFdelend \DIFaddbegin \DIFadd{\(\mu\)g}\DIFaddend /m\textsuperscript{3} for an additional 4 hours. GOES fire
 detection occurred within 59 minutes after the completion of ignition
 operations, with two GOES-18 hotspots totalling 107.7 MW detected. NOAA
 VIIRS sensors detected a similar sum of 108 MW of fire radiative power
@@ -613,7 +673,7 @@ detection across 7 distinct sensors were made from WR-14 and WR-15 that
 extended over an area approximately 4,800 ha and up to 6.5 km from the
 WR-14 fire. Overnight winds were from the NW between 9 and 14 km/h.
 PM\textsubscript{2.5} concentrations as high as 100
-\(\mu\)g/m\textsuperscript{3} were detected in this dispersed
+\DIFdelbegin \DIFdel{ug}\DIFdelend \DIFaddbegin \DIFadd{\(\mu\)g}\DIFaddend /m\textsuperscript{3} were detected in this dispersed
 ground-level smoke plume.
 
 Prescribed fire WR-08 (150 ha) took place at 09:00 local time under
@@ -633,7 +693,7 @@ occurred the following morning when 2 MW of smouldering FRP was
 detected. Approximately 1 hour prior to the VIIRS detection, smoke
 sensor warning detections were made by two sensors located 1.4 and 2.6
 km west of the fire, where PM\textsubscript{2.5} concentrations in
-excess of 200 \(\mu\)g/m\textsuperscript{3} were detected.
+excess of 200 \DIFdelbegin \DIFdel{ug}\DIFdelend \DIFaddbegin \DIFadd{\(\mu\)g}\DIFaddend /m\textsuperscript{3} were detected.
 
 Prescribed fire WR-09 took place the morning following WR-08, but under
 cloud-free conditions. The 250 ha of fuels was detected as lighter
@@ -757,7 +817,54 @@ minutes after ignition.
 \centering\centering\centering
 \caption{\label{tab:Final-summary-table}Fire ignition and detection characteristics of each fire event, in order of decreasing final fire size in each study area.  Area, Fire Radiative Power (FRP), and plume height at warning are all estimates based on fire growth modelling.}
 \centering
-\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
+\DIFdelbeginFL %DIFDELCMD < \resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
+%DIFDELCMD < \begin{tabular}[t]{>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{}p{1.8cm}|>{}p{1.8cm}|>{}p{1.8cm}}
+%DIFDELCMD < \hline
+%DIFDELCMD < FireName & Final area (ha) & Distance to sensor (m) & Time first warning (min) & Time first alert (min) & Time first VIIRS (min) & Time first GOES (min) & First Obs FRP (MW) & Est. Area at warning (ha) & Est. FRP at warning (MW) & Est. Plume height at warning (m)\\
+%DIFDELCMD < \hline
+%DIFDELCMD < WR-15 & 600.00 & 6554 [m] & 246 & 355 & 766 & - & 2 & 600 & 2011 & 1367\\
+%DIFDELCMD < \hline
+%DIFDELCMD < WR-14 & 550.00 & 1812 [m] & 13 & 23 & 149 & 59 & 108 & 7 & 117 & 629\\
+%DIFDELCMD < \hline
+%DIFDELCMD < WR-12 & 375.00 & 529 [m] & 133 & 300 & 167 & 187 & 108 & 91 & 240 & 962\\
+%DIFDELCMD < \hline
+%DIFDELCMD < WR-09 & 250.00 & 1192 [m] & 140 & 158 & 215 & - & 232 & 250 & 1232 & 1334\\
+%DIFDELCMD < \hline
+%DIFDELCMD < WR-08 & 150.00 & 1739 [m] & 309 & 338 & 1095 & - & 2 & 150 & 445 & 780\\
+%DIFDELCMD < \hline
+%DIFDELCMD < WR-16 & 75.00 & 4782 [m] & 396 & - & 218 & - & 7 & 75 & 147 & 935\\
+%DIFDELCMD < \hline
+%DIFDELCMD < WR-01 & 1.00 & - & - & - & - & - & - & - & - & -\\
+%DIFDELCMD < \hline
+%DIFDELCMD < WR-04 & 1.00 & - & - & - & - & - & - & - & - & -\\
+%DIFDELCMD < \hline
+%DIFDELCMD < WR-06 & 0.60 & - & - & - & - & - & - & - & - & -\\
+%DIFDELCMD < \hline
+%DIFDELCMD < WR-07 & 0.28 & 4995 [m] & 86 & 112 & - & - & - & 0 & 2 & 230\\
+%DIFDELCMD < \hline
+%DIFDELCMD < WR-13 & 0.25 & - & - & - & - & - & - & - & - & -\\
+%DIFDELCMD < \hline
+%DIFDELCMD < WR-11 & 0.20 & - & - & - & - & - & - & - & - & -\\
+%DIFDELCMD < \hline
+%DIFDELCMD < WR-05 & 0.05 & - & - & - & - & - & - & - & - & -\\
+%DIFDELCMD < \hline
+%DIFDELCMD < WR-02 & 0.03 & - & - & - & - & - & - & - & - & -\\
+%DIFDELCMD < \hline
+%DIFDELCMD < WR-03 & 0.02 & - & - & - & - & - & - & - & - & -\\
+%DIFDELCMD < \hline
+%DIFDELCMD < WR-10 & 0.01 & - & - & - & - & - & - & - & - & -\\
+%DIFDELCMD < \hline
+%DIFDELCMD < VC-01 & 75.00 & 2109 [m] & - & 126 & 765 & - & 2 & - & - & -\\
+%DIFDELCMD < \hline
+%DIFDELCMD < VC-02 & 75.00 & 490 [m] & - & 202 & - & - & 2 & - & - & -\\
+%DIFDELCMD < \hline
+%DIFDELCMD < VC-03 & 6.00 & - & - & - & 163 & - & 3 & - & - & -\\
+%DIFDELCMD < \hline
+%DIFDELCMD < RC-01 & 75.00 & 891 [m] & 298 & 668 & - & 213 & 69 & 75 & 203 & 1058\\
+%DIFDELCMD < \hline
+%DIFDELCMD < \end{tabular}}
+%DIFDELCMD < %%%
+\DIFdelendFL \DIFaddbeginFL \resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
 \begin{tabular}[t]{>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}}
 \hline
 FireName & Final area (ha) & Distance to sensor (m) & Time first warning (min) & Time first alert (min) & Time first VIIRS (min) & Time first GOES (min) & First Obs FRP (MW) & Est. Area at warning (ha) & Est. FRP at warning (MW) & Est. Plume height at warning (m)\\
@@ -803,7 +910,7 @@ VC-03 & 6 & - & - & - & 163 & - & 2.9 &  &  & \\
 RC-01 & 75 & 891 & 298 & 668 & - & 213 & 69 & 80 $\pm$ 20 & 200$\pm$80 & 1060$\pm$420\\
 \hline
 \end{tabular}}
-\end{table}
+\DIFaddendFL \end{table}
 
 \begin{figure}
 \includegraphics[width=0.95\linewidth]{WR_all_alerts} \caption{\label{fig::WR_all_alerts}Biplot of distance from sensor to fire compared to peak PM~2.5~ concentration by detection event.  Events are coloured by the hour of the start of the detection. Data for the Wainwright study area only.}\label{fig:WR_all_alerts}
@@ -816,20 +923,20 @@ In addition to the first detection, the smoke sensors produced useful
 information on the sustained production of ground-level smoke in the
 hours after ignition and growth of the prescribed and wildfires. Smoke
 detection events were registered at Wainwright up to 17 km from the fire
-area, at concentrations as high as 5,000 \(\mu\)g/m\textsuperscript{3}
+area, at concentrations as high as 5,000 \DIFdelbegin \DIFdel{ug}\DIFdelend \DIFaddbegin \DIFadd{\(\mu\)g}\DIFaddend /m\textsuperscript{3}
 (Figure \ref{fig:WR_all_alerts}). Concentrations of
 PM\textsubscript{2.5} have been registered as high as 20,000
-\(\mu\)g/m\textsuperscript{3} at the immediate perimeter of fires by
+\DIFdelbegin \DIFdel{ug}\DIFdelend \DIFaddbegin \DIFadd{\(\mu\)g}\DIFaddend /m\textsuperscript{3} at the immediate perimeter of fires by
 similar ground-based sensor packages by \citep{chwalek2023}. Smoke event
 observations the most distant from the fire were typically made after
 sunset through the early morning, and had a lower peak
-PM\textsubscript{2.5} of less than 800 \(\mu\)g/m\textsuperscript{3}.
+PM\textsubscript{2.5} of less than 800 \DIFdelbegin \DIFdel{ug}\DIFdelend \DIFaddbegin \DIFadd{\(\mu\)g}\DIFaddend /m\textsuperscript{3}.
 Afternoon smoke event observations made near the peak of the daily
 burning conditions (highest temperature and winds, lowest humidity) were
 confined to a distance of less than 2.5 km typically, and only in these
 observations within 2.5 km were PM\textsubscript{2.5} concentrations in
-excess of 300 \(\mu\)g/m\textsuperscript{3} observed. Short duration and
-low concentration (\textless50 \(\mu\)g/m\textsuperscript{3} smoke
+excess of 300 \DIFdelbegin \DIFdel{ug}\DIFdelend \DIFaddbegin \DIFadd{\(\mu\)g}\DIFaddend /m\textsuperscript{3} observed. Short duration and
+low concentration (\textless50 \DIFdelbegin \DIFdel{ug}\DIFdelend \DIFaddbegin \DIFadd{\(\mu\)g}\DIFaddend /m\textsuperscript{3} smoke
 events) were only observed at distances of 5 km or less; smoke events
 observed closer were both of longer duration and higher concentration.
 
@@ -841,15 +948,16 @@ where between 400 and 1,600 m above the ground. Against a high-contrast
 blue sky, such features are likely visible at a limit approaching the
 maximum aeronautical visibility range of 50--60 km, as supported by an
 analysis of detection distances by human observers from fire towers (see
-Figure A3). However, visual detection observations were not undertaken
+Figure A3). \DIFaddbegin \DIFadd{However, visual detection observations were not undertaken
 as a parallel effort during the smoke sensor deployment; future work on
 this topic would benefit from visual plume observation and detection in
 parallel to smoke and remote sensing. We do not explicitly model the
 visual detection of the smoke plumes, but rather provide this data as
 comparison against fire detection distances in nearby forest fire
 management zones with trained human observers.
+}
 
-Under widespread regional smoke or overcast conditions, the visual
+\DIFaddend Under widespread regional smoke or overcast conditions, the visual
 contrast between a smoke plume can diminish, and thus reduce the
 detection distance \citep{victorSimpleMethodPredicting1977}. Larger,
 more intense fires that are beyond suppression resources often feature
@@ -877,12 +985,13 @@ the smoke source was from very large and very well-observed fires that
 were being heavily suppressed. This smoke emission is well predicted in
 advance and in real-time using operational air quality forecasting
 systems that incorporate satellite fire detection and smoke dispersion
-schemes such as \citet{chenFireWorkV20Air2019}. These regional,
+schemes such as \citet{chenFireWorkV20Air2019}. \DIFaddbegin \DIFadd{These regional,
 widespread smoke emissions present a major source of false positive
 events in the context of local smoke and fire detection; furthermore,
 the detection of local fire events during periods of regional smoke
 remains a significant shortcoming in the fire detection event algorithm
 provided by sensor vendor.
+}\DIFaddend 
 
 \section{Conclusions}\label{conclusions}
 
@@ -933,7 +1042,7 @@ bilateral US/CAN collaboration and sensor deployments. We would like to
 thank Maj. Lavigne and Sargeant-Major (ret'd) Steve Noiseux and their
 team at CFB Valcartier for their excellent support in installing the
 sensors there, as well as the late Robert Prospero, Mark Batten,
-Sgt.~Korosi and his team at the CF Detachment Wainwright for their
+Sgt\DIFaddbegin \DIFadd{.~}\DIFaddend Korosi and his team at the CF Detachment Wainwright for their
 excellent support in the installation at that location. Finally, we
 would like to thank Olivier Lundqvist, Luc Carrière and Christine
 Bussières at SOPFEU; and Samuel Siddall, Neal McLoughlin, Andrew Simpson
