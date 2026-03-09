@@ -343,19 +343,25 @@ with primarily theoretical and simulation evaluation of such systems
 \citep[e.g.][]{sernaDistributedForestFire2015}. Multi-sensor approaches
 have been shown to be effective under moderate burning conditions in
 grass fuels, with smoke particulate, organic gases, and thermal
-detection approaches being the most effective \citep{chwalek2023}. With
-the recent availability of commercial vendors making such distributed
-small sensor systems available to communities or fire management
-agencies, an field evaluation of smoke-detecting ground wildfire sensors
-was conducted through the 2023 and 2024 seasons during prescribed burns
-as well as incidental wildfires at three locations in varying terrain
-across Canada. All fires consisted of primary grass fuels with some
-shrubs and sparse trees. Ground-based fire detection records were
-compared to a proxy for human visual detection (smoke plume height) as
-well as satellite fire detection records. Data on ignition time, fire
-weather, and final fire size were used in conjunction with standard fire
-growth models to estimate fire size and activity at varying detection
-intervals.
+detection approaches being the most effective \citep{chwalek2023}.
+
+With the recent availability of commercial vendors making such
+distributed small sensor systems available to communities or fire
+management agencies, n field evaluation of smoke-detecting ground
+wildfire sensors was conducted through the 2023 and 2024 seasons during
+prescribed burns as well as incidental wildfires at three locations in
+varying terrain across Canada. This study represents the first large
+field deployment and assessment of ground-based smoke detection sensors
+across multiple prescribed and wildfires with a fixed network
+(i.e.~sensors not redeployed around each fire). Thus, this deployment
+simulates the case where dense sensor network deployment is used as part
+of a fire detection and monitoring program. All fires consisted of
+primary grass fuels with some shrubs and sparse trees. Ground-based fire
+detection records were compared to a proxy for human visual detection
+(smoke plume height) as well as satellite fire detection records. Data
+on ignition time, fire weather, and final fire size were used in
+conjunction with standard fire growth models to estimate fire size and
+activity at varying detection intervals.
 
 \section{Methods}\label{methods}
 
@@ -421,27 +427,34 @@ total burned area allows for characterization of the fire for comparison
 with other methods of detection.
 
 Ground sensors detect particulate matter (PM) and volatile organic
-compound (VOC) concentrations, and report data every 5 minutes. Sensors
-are powered by solar panels and communicate via LTE wireless protocol.
-Best deployed at a height of greater than 3 m (trees or utility poles).
-Warnings (first detection with a lower threshold) or Alerts (higher
-threshold) are sent out by the sensors if these concentrations pass a
-certain threshold determined by vendor-provided algorithms; warnings are
-approximated by PM\textsubscript{2.5} observations exceeding 30
-ug/m\textsuperscript{3} and alerts as observations exceeding 200
-ug/m\textsuperscript{3}. A web portal allowed stakeholders to monitor
-sensor status and receive text notifications for the wildfire ignitions
-Warnings and Alerts. The focus of this work is on the applied utility of
-the sensor network for small and localized smoke events; the precision
-or accuracy of lower-cost particulate concentration measurements has
-been extensively studied elsewhere \citep{holder2020}. The analyses
-contained herein are not meant to be an evaluation of the specifications
-and performance of the individual ground sensors. The main purpose of
-conducting these analyses is to provide advice to provincial/territorial
-wildfire suppression managers on what the most effective utilization of
-such ground sensors is operationally -- either in conjunction with other
-detection methods, or on their own; and before, during and after a
-suppression operation.
+compound (VOC) concentrations, and report data every 5 minutes. PM and
+VOC sensors offer an advantage over CO and CH4 sensors via multi-channel
+data that allows for sensor diagnostics (i.e.~concentration ratio
+between the size classes PM\textsubscript{2.5} and
+PM\textsubscript{10}). Additionally, PM emissions are most closely
+related to both human health impacts \citep{matz2026} as well as fire
+suppression operations challenges related to reduced visibility due to
+wildfire smoke \citep{brambilla2025}. Sensors are powered by solar
+panels and communicate via LTE wireless protocol. Best deployed at a
+height of greater than 3 m (trees or utility poles). Warnings (first
+detection with a lower threshold) or Alerts (higher threshold) are sent
+out by the sensors if these concentrations pass a certain threshold
+determined by vendor-provided algorithms; warnings are approximated by
+PM\textsubscript{2.5} observations exceeding 30
+\(\mu\)g/m\textsuperscript{3} and alerts as observations exceeding 200
+\(\mu\)g/m\textsuperscript{3}. A web portal allowed stakeholders to
+monitor sensor status and receive text notifications for the wildfire
+ignitions Warnings and Alerts. The focus of this work is on the applied
+utility of the sensor network for small and localized smoke events; the
+precision or accuracy of lower-cost particulate concentration
+measurements has been extensively studied elsewhere \citep{holder2020}.
+The analyses contained herein are not meant to be an evaluation of the
+specifications and performance of the individual ground sensors. The
+main purpose of conducting these analyses is to provide advice to
+provincial/territorial wildfire suppression managers on what the most
+effective utilization of such ground sensors is operationally -- either
+in conjunction with other detection methods, or on their own; and
+before, during and after a suppression operation.
 
 \subsection{Other detection modes}\label{other-detection-modes}
 
@@ -449,29 +462,36 @@ Ground-based smoke sensor observations were compared to other more
 common detection modes, namely (1) visual detection (both public and
 fire agency) as well as (2) polar orbiting satellites for detection of
 smaller and smouldering fires, and (3) geostationary fire detection for
-large and fast-growing fires. Visual detection potential was assessed
-using the modelled fire growth from the Canadian Forest Fire Behaviour
-Prediction System \citep{forestrycanadafiredangerratinggroup1992},
-coupled to the widely used plume rise model from Briggs that can be
-applied to small to medium sized fires \citep{tory2018}. The
-relationship between plume rise height, diameter, and detection distance
-is not robustly understood; historical records indicate visual detection
-of forest fires \textless1 ha is possible upwards of 25 km given clear
-line of sight and favourable atmospheric conditions (see Appendix F).
-Fire radiative power over time as a function of fire growth was also
-estimated for each fire using the same fire growth models from
-\citep{forestrycanadafiredangerratinggroup1992} as were used in plume
-rise estimates (see Appendix F). Fire radiative power estimate over time
-were made assuming 17\% of instantaneous total area-wise fire intensity
-is released as infrared radiation, following field-scale observations in
-similar fuels by \citep{johnstonDirectEstimationByrams2017}.
+large and fast-growing fires. Visual detection potential was estimated
+using two model used in conjunction: modelled fire growth and energy
+output from the Canadian Forest Fire Behaviour Prediction System
+\citep{forestrycanadafiredangerratinggroup1992}, coupled to the widely
+used plume rise model from Briggs that can be applied to small to medium
+sized fires \citep{tory2018}. Since detailed fire growth records over
+time were not available, fire ignition records and hourly weather were
+used to drive the fire ignition until the final recorded area was
+achieved by the model. Fire growth modelling estimates with nearby
+weather observations are typically accurate within 20\% of observations
+\citep{taylor2018}, with similar accuracy in models of FRP and plume
+heights, resulting in a larger, compounded error rates well above 20\%
+for those estimates. The relationship between plume rise height,
+diameter, and detection distance is not robustly understood; historical
+records indicate visual detection of forest fires \textless1 ha is
+possible well over 25 km given clear line of sight and favourable
+atmospheric conditions (see Appendix F). Thus, any comparison to plume
+heights is merely for reference, as visual detection modes are very
+efficient in populated areas.
 
 Satellite detection records (both polar orbiting and geostationary) for
 each individual fire event were obtained from the NASA FIRMS archive
 \citep{hewson2024}. A qualitative assessment of cloud cover for daytime
 periods was accessed via the NASA Worldview service for the satellite
 overpasses during fire events (including those without satellite
-detection).
+detection). For each fire, the ground-reported ignition time (both
+wildfire and prescribed fire) was available with precision down to the
+minute from fire management records. The reported ignition time was then
+used as time zero each event, with fire growth and detection events
+calculated as minutes since ignition.
 
 \begin{table}[!h]
 \centering\centering\centering
@@ -552,28 +572,29 @@ to moderate winds \citep{hudaStudyFuelSmokeDynamics2020}.
 
 For the 500 ha WR-14 prescribed fire, the southerly winds and large
 ignition area allowed the rapid detection of the WR-14 fire, which
-experienced a rapid increase from ambient PM2.5 concentrations of
-\textless10 ug/m\textsuperscript{3} to 3,260 ug/m\textsuperscript{3} at
-a sensor location 1.8 km downwind. PM concentrations continued to be
-elevated above 100 ug/m\textsuperscript{3} for an additional 4 hours.
-GOES fire detection occurred within 59 minutes after the completion of
-ignition operations, with two GOES-18 hotspots totalling 107.7 MW
-detected. NOAA VIIRS sensors detected a similar sum of 108 MW of fire
-radiative power at 149 minutes after ignition during the early afternoon
-overpasses. All of the additional sensors at Wainwright were deployed
-further south except one sensor located 3 km to the west, which also did
-not register any elevated PM concentrations. Photos of the strip backing
-fire ignition pattern at 09:00 showed light winds corresponding to
-station measurements of 10 km/h winds, but by the time of completion of
-ignition operations at 11:00, winds had increased rapidly to 30 km/h and
-relative humidity of 15\%, resulting in a Grassland Spread Index of 95
-(Table \ref{tab:allfires-ign-wx-table}). Of the large fires at
-Wainwright, WR-14 had the most severe fire weather conditions of the
-large fires and the second highest wind speeds at ignition of all
-Wainwright fires. Unique to this fire was the rapid detection both by
-the smoke sensors as well as the GOES geostationary satellite. This
-rapid spread rate coupled with stronger winds leads to a lower plume
-height and more turbulent mixing of smoke down to the surface
+experienced a rapid increase from ambient PM\textsubscript{2.5}
+concentrations of \textless10 \(\mu\)g/m\textsuperscript{3} to 3,260
+\(\mu\)g/m\textsuperscript{3} at a sensor location 1.8 km downwind. PM
+concentrations continued to be elevated above 100
+\(\mu\)g/m\textsuperscript{3} for an additional 4 hours. GOES fire
+detection occurred within 59 minutes after the completion of ignition
+operations, with two GOES-18 hotspots totalling 107.7 MW detected. NOAA
+VIIRS sensors detected a similar sum of 108 MW of fire radiative power
+at 149 minutes after ignition during the early afternoon overpasses. All
+of the additional sensors at Wainwright were deployed further south
+except one sensor located 3 km to the west, which also did not register
+any elevated PM concentrations. Photos of the strip backing fire
+ignition pattern at 09:00 showed light winds corresponding to station
+measurements of 10 km/h winds, but by the time of completion of ignition
+operations at 11:00, winds had increased rapidly to 30 km/h and relative
+humidity of 15\%, resulting in a Grassland Spread Index of 95 (Table
+\ref{tab:allfires-ign-wx-table}). Of the large fires at Wainwright,
+WR-14 had the most severe fire weather conditions of the large fires and
+the second highest wind speeds at ignition of all Wainwright fires.
+Unique to this fire was the rapid detection both by the smoke sensors as
+well as the GOES geostationary satellite. This rapid spread rate coupled
+with stronger winds leads to a lower plume height and more turbulent
+mixing of smoke down to the surface
 \citep{freitasTechnicalNoteSensitivity2010}, which likely contributed to
 the rapid detection by the smoke sensors.
 
@@ -592,8 +613,8 @@ detection across 7 distinct sensors were made from WR-14 and WR-15 that
 extended over an area approximately 4,800 ha and up to 6.5 km from the
 WR-14 fire. Overnight winds were from the NW between 9 and 14 km/h.
 PM\textsubscript{2.5} concentrations as high as 100
-ug/m\textsuperscript{3} were detected in this dispersed ground-level
-smoke plume.
+\(\mu\)g/m\textsuperscript{3} were detected in this dispersed
+ground-level smoke plume.
 
 Prescribed fire WR-08 (150 ha) took place at 09:00 local time under
 partially cloudy conditions with moderate relative humidity (50\%) and
@@ -612,7 +633,7 @@ occurred the following morning when 2 MW of smouldering FRP was
 detected. Approximately 1 hour prior to the VIIRS detection, smoke
 sensor warning detections were made by two sensors located 1.4 and 2.6
 km west of the fire, where PM\textsubscript{2.5} concentrations in
-excess of 200 ug/m\textsuperscript{3} were detected.
+excess of 200 \(\mu\)g/m\textsuperscript{3} were detected.
 
 Prescribed fire WR-09 took place the morning following WR-08, but under
 cloud-free conditions. The 250 ha of fuels was detected as lighter
@@ -732,54 +753,66 @@ single small fire at Valcartier (6 ha) did not result in any smoke
 sensor warnings or alerts, but did result in a VIIRS detection 163
 minutes after ignition.
 
+\begin{verbatim}
+## [1] "LC_COLLATE=en_US.UTF-8;LC_CTYPE=en_US.UTF-8;LC_MONETARY=en_US.UTF-8;LC_NUMERIC=C;LC_TIME=en_US.UTF-8"
+\end{verbatim}
+
+\begin{verbatim}
+##  [1] "2010$\\pm$800" "120$\\pm$50"   "240$\\pm$100"  "1230$\\pm$490"
+##  [5] "440$\\pm$180"  "150$\\pm$60"   ""              ""             
+##  [9] ""              "2 $\\pm$ 0.8"  ""              ""             
+## [13] ""              ""              ""              ""             
+## [17] ""              ""              ""              "200$\\pm$80"
+\end{verbatim}
+
 \begin{table}[!h]
 \centering\centering\centering
 \caption{\label{tab:Final-summary-table}Fire ignition and detection characteristics of each fire event, in order of decreasing final fire size in each study area.  Area, Fire Radiative Power (FRP), and plume height at warning are all estimates based on fire growth modelling.}
 \centering
 \resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
-\begin{tabular}[t]{>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{}p{1.8cm}|>{}p{1.8cm}|>{}p{1.8cm}}
+\begin{tabular}[t]{>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.8cm}}
 \hline
 FireName & Final area (ha) & Distance to sensor (m) & Time first warning (min) & Time first alert (min) & Time first VIIRS (min) & Time first GOES (min) & First Obs FRP (MW) & Est. Area at warning (ha) & Est. FRP at warning (MW) & Est. Plume height at warning (m)\\
 \hline
-WR-15 & 600.00 & 6554 [m] & 246 & 355 & 766 & - & 2 & 600 & 2011 & 1367\\
+WR-15 & 600 & 6554 & 246 & 355 & 766 & - & 2.3 & 600 $\pm$ 120 & 2010$\pm$800 & 1370$\pm$550\\
 \hline
-WR-14 & 550.00 & 1812 [m] & 13 & 23 & 149 & 59 & 108 & 7 & 117 & 629\\
+WR-14 & 550 & 1812 & 13 & 23 & 149 & 59 & 108 & 10 $\pm$ 0 & 120$\pm$50 & 630$\pm$250\\
 \hline
-WR-12 & 375.00 & 529 [m] & 133 & 300 & 167 & 187 & 108 & 91 & 240 & 962\\
+WR-12 & 375 & 529 & 133 & 300 & 167 & 187 & 108 & 90 $\pm$ 20 & 240$\pm$100 & 960$\pm$380\\
 \hline
-WR-09 & 250.00 & 1192 [m] & 140 & 158 & 215 & - & 232 & 250 & 1232 & 1334\\
+WR-09 & 250 & 1192 & 140 & 158 & 215 & - & 232 & 250 $\pm$ 50 & 1230$\pm$490 & 1330$\pm$530\\
 \hline
-WR-08 & 150.00 & 1739 [m] & 309 & 338 & 1095 & - & 2 & 150 & 445 & 780\\
+WR-08 & 150 & 1739 & 309 & 338 & 1095 & - & 1.7 & 150 $\pm$ 30 & 440$\pm$180 & 780$\pm$310\\
 \hline
-WR-16 & 75.00 & 4782 [m] & 396 & - & 218 & - & 7 & 75 & 147 & 935\\
+WR-16 & 75 & 4782 & 396 & - & 218 & - & 6.9 & 80 $\pm$ 20 & 150$\pm$60 & 940$\pm$370\\
 \hline
-WR-01 & 1.00 & - & - & - & - & - & - & - & - & -\\
+WR-01 & 1 & - & - & - & - & - & - &  &  & \\
 \hline
-WR-04 & 1.00 & - & - & - & - & - & - & - & - & -\\
+WR-04 & 1 & - & - & - & - & - & - &  &  & \\
 \hline
-WR-06 & 0.60 & - & - & - & - & - & - & - & - & -\\
+WR-06 & 0.6 & - & - & - & - & - & - &  &  & \\
 \hline
-WR-07 & 0.28 & 4995 [m] & 86 & 112 & - & - & - & 0 & 2 & 230\\
+WR-07 & 0.28 & 4995 & 86 & 112 & - & - & - & 0.3 $\pm$ 0.05 & 2 $\pm$ 0.8 & 230$\pm$90\\
 \hline
-WR-13 & 0.25 & - & - & - & - & - & - & - & - & -\\
+WR-13 & 0.25 & - & - & - & - & - & - &  &  & \\
 \hline
-WR-11 & 0.20 & - & - & - & - & - & - & - & - & -\\
+WR-11 & 0.2 & - & - & - & - & - & - &  &  & \\
 \hline
-WR-05 & 0.05 & - & - & - & - & - & - & - & - & -\\
+WR-05 & 0.05 & - & - & - & - & - & - &  &  & \\
 \hline
-WR-02 & 0.03 & - & - & - & - & - & - & - & - & -\\
+WR-02 & 0.03 & - & - & - & - & - & - &  &  & \\
 \hline
-WR-03 & 0.02 & - & - & - & - & - & - & - & - & -\\
+WR-03 & 0.02 & - & - & - & - & - & - &  &  & \\
 \hline
-WR-10 & 0.01 & - & - & - & - & - & - & - & - & -\\
+WR-10 & 0.01 & - & - & - & - & - & - &  &  & \\
 \hline
-VC-01 & 75.00 & 2109 [m] & - & 126 & 765 & - & 2 & - & - & -\\
+VC-01 & 75 & 2109 & - & 126 & 765 & - & 1.8 &  &  & \\
 \hline
-VC-02 & 75.00 & 490 [m] & - & 202 & - & - & 2 & - & - & -\\
+VC-02 & 75 & 490 & - & 202 & - & - & 1.8 &  &  & \\
 \hline
-VC-03 & 6.00 & - & - & - & 163 & - & 3 & - & - & -\\
+VC-03 & 6 & - & - & - & 163 & - & 2.9 &  &  & \\
 \hline
-RC-01 & 75.00 & 891 [m] & 298 & 668 & - & 213 & 69 & 75 & 203 & 1058\\
+RC-01 & 75 & 891 & 298 & 668 & - & 213 & 69 & 80 $\pm$ 20 & 200$\pm$80 & 1060$\pm$420\\
 \hline
 \end{tabular}}
 \end{table}
@@ -795,22 +828,22 @@ In addition to the first detection, the smoke sensors produced useful
 information on the sustained production of ground-level smoke in the
 hours after ignition and growth of the prescribed and wildfires. Smoke
 detection events were registered at Wainwright up to 17 km from the fire
-area, at concentrations as high as 5,000 ug/m\textsuperscript{3} (Figure
-\ref{fig:WR_all_alerts}). Concentrations of PM\textsubscript{2.5} have
-been registered as high as 20,000 ug/m\textsuperscript{3} at the
-immediate perimeter of fires by similar ground-based sensor packages by
-\citep{chwalek2023}. Smoke event observations the most distant from the
-fire were typically made after sunset through the early morning, and had
-a lower peak PM\textsubscript{2.5} of less than 800
-ug/m\textsuperscript{3}. Afternoon smoke event observations made near
-the peak of the daily burning conditions (highest temperature and winds,
-lowest humidity) were confined to a distance of less than 2.5 km
-typically, and only in these observations within 2.5 km were
-PM\textsubscript{2.5} concentrations in excess of 300
-ug/m\textsuperscript{3} observed. Short duration and low concentration
-(\textless50 ug/m\textsuperscript{3} smoke events) were only observed at
-distances of 5 km or less; smoke events observed closer were both of
-longer duration and higher concentration.
+area, at concentrations as high as 5,000 \(\mu\)g/m\textsuperscript{3}
+(Figure \ref{fig:WR_all_alerts}). Concentrations of
+PM\textsubscript{2.5} have been registered as high as 20,000
+\(\mu\)g/m\textsuperscript{3} at the immediate perimeter of fires by
+similar ground-based sensor packages by \citep{chwalek2023}. Smoke event
+observations the most distant from the fire were typically made after
+sunset through the early morning, and had a lower peak
+PM\textsubscript{2.5} of less than 800 \(\mu\)g/m\textsuperscript{3}.
+Afternoon smoke event observations made near the peak of the daily
+burning conditions (highest temperature and winds, lowest humidity) were
+confined to a distance of less than 2.5 km typically, and only in these
+observations within 2.5 km were PM\textsubscript{2.5} concentrations in
+excess of 300 \(\mu\)g/m\textsuperscript{3} observed. Short duration and
+low concentration (\textless50 \(\mu\)g/m\textsuperscript{3} smoke
+events) were only observed at distances of 5 km or less; smoke events
+observed closer were both of longer duration and higher concen
 
 \subsection{Estimating visual detection
 range}\label{estimating-visual-detection-range}
@@ -820,8 +853,16 @@ where between 400 and 1,600 m above the ground. Against a high-contrast
 blue sky, such features are likely visible at a limit approaching the
 maximum aeronautical visibility range of 50--60 km, as supported by an
 analysis of detection distances by human observers from fire towers (see
-Figure A3). Under widespread regional smoke or overcast conditions, the
-visual contrast between a smoke plume can diminish, and thus reduce the
+Figure A3). However, visual detection observations were not undertaken
+as a parallel effort during the smoke sensor deployment; future work on
+this topic would benefit from visual plume observation and detection in
+parallel to smoke and remote sensing. We do not explicitly model the
+visual detection of the smoke plumes, but rather provide this data as
+comparison against fire detection distances in nearby forest fire
+management zones with trained human observers.
+
+Under widespread regional smoke or overcast conditions, the visual
+contrast between a smoke plume can diminish, and thus reduce the
 detection distance \citep{victorSimpleMethodPredicting1977}. Larger,
 more intense fires that are beyond suppression resources often feature
 darker (and larger) smoke columns
@@ -848,7 +889,12 @@ the smoke source was from very large and very well-observed fires that
 were being heavily suppressed. This smoke emission is well predicted in
 advance and in real-time using operational air quality forecasting
 systems that incorporate satellite fire detection and smoke dispersion
-schemes such as \citet{chenFireWorkV20Air2019}.
+schemes such as \citet{chenFireWorkV20Air2019}. These regional,
+widespread smoke emissions present a major source of false positive
+events in the context of local smoke and fire detection; furthermore,
+the detection of local fire events during periods of regional smoke
+remains a significant shortcoming in the fire detection event algorithm
+provided by sensor vendor.
 
 \section{Conclusions}\label{conclusions}
 
@@ -898,12 +944,13 @@ Venture Collaborative for logistical organization and support of the
 bilateral US/CAN collaboration and sensor deployments. We would like to
 thank Maj. Lavigne and Sargeant-Major (ret'd) Steve Noiseux and their
 team at CFB Valcartier for their excellent support in installing the
-sensors there, as well as the late Robert Prospero, Mark Batten, Sgt
-Korosi and his team at the CF Detachment Wainwright for their excellent
-support in the installation at that location. Finally, we would like to
-thank Olivier Lundqvist, Luc Carrière and Christine Bussières at SOPFEU;
-and Samuel Siddall, Neal McLoughlin, Andrew Simpson and Ash Richardson
-and their colleagues at the BCWS for their support in this initiative.
+sensors there, as well as the late Robert Prospero, Mark Batten,
+Sgt.~Korosi and his team at the CF Detachment Wainwright for their
+excellent support in the installation at that location. Finally, we
+would like to thank Olivier Lundqvist, Luc Carrière and Christine
+Bussières at SOPFEU; and Samuel Siddall, Neal McLoughlin, Andrew Simpson
+and Ash Richardson and their colleagues at the BCWS for their support in
+this initiative.
 
 \clearpage
 
