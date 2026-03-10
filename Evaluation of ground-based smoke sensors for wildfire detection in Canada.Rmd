@@ -72,9 +72,6 @@ options(knitr.kable.NA = '-')
 # via https://stackoverflow.com/questions/18965637/set-global-thousand-separator-on-knitr/18967590#18967590 should set all printed numbers to have thousands separator
 knitr::knit_hooks$set(inline = function(x) {   if(!is.numeric(x)){     x   }else{    prettyNum(round(x,2), big.mark=",")    } })
 
-##manual creation of editable doc file (not working currently):
-# rmarkdown::render("~/DRDC-smoke/Evaluation of ground-based smoke sensors for wildfire detection in Canada.Rmd", output_file = "SmokeSensorsDraft.rtf")
-
 ## compiler error: https://tex.stackexchange.com/questions/10706/pdftex-error-font-expansion-auto-expansion-is-only-possible-with-scalable
 
 TopOfAtmTrans <- 0.9 ### basic value for the transmittivity of midwave through a cloud-free atmosphere
@@ -92,7 +89,7 @@ Forest and other vegetation fire response and coordination in Canada varies by l
 ```{r ABHist-detection-mode, fig.cap="\\label{tab:ABHist-detection-mode}Fire occurrence by detection mode and size at detection for the province of Alberta, 2006-2024. This data is largely representative for populated, managed forests across Canada but not very remote unmanaged forests", message=FALSE, include=FALSE}
 ## https://open.alberta.ca/dataset/a221e7a0-4f46-4be7-9c5a-e29de9a3447e/resource/80480824-0c50-456c-9723-f9d4fc136141/download/fp-historical-wildfire-data-2006-2024.xlsx
 
-ABHist <- read.csv("~/DRDC-smoke/fp-historical-wildfire-data-2006-2024.csv")
+ABHist <- read.csv("fp-historical-wildfire-data-2006-2024.csv")
 
 ABHist <- ABHist %>% mutate(Assess_size_class = case_when(
  ASSESSMENT_HECTARES < 0.2 ~ "<0.2 ha",
@@ -145,7 +142,7 @@ ggsave("ABHist.png",height=8,width=8,units=c("in"))
 ##goal here is to look at hotspots, the lag between day of fire detection and day of first hotspot, and also % of fires by size class with no hotspots
 
 ###load data and size classes 
-NBAC <- read.csv("~/DRDC-smoke/NBAC_2002_2024.csv")
+NBAC <- read.csv("NBAC_2002_2024.csv")
 
 ### alternately, read in geopackage ##not run
 #NBAC <- st_read("~/DRDC-smoke/NBAC_2003_2024.gpkg")
@@ -229,12 +226,12 @@ Ground-based smoke sensor observations were compared to other more common detect
 Satellite detection records (both polar orbiting and geostationary) for each individual fire event were obtained from the NASA FIRMS archive [@hewson2024]. A qualitative assessment of cloud cover for daytime periods was accessed via the NASA Worldview service for the satellite overpasses during fire events (including those without satellite detection). For each fire, the ground-reported ignition time (both wildfire and prescribed fire) was available with precision down to the minute from fire management records. The reported ignition time was then used as time zero each event, with fire growth and detection events calculated as minutes since ignition.
 
 ```{r load-process-VC-data-DO-NOT-RUN, eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+main_path<-getwd()
+subdir <- "VC"
 
-# C:\Users\danthomp\OneDrive - NRCan RNCan\DRDC Smoke Sensors\WildfireSensorDataAnalysis\WildfireSensorDataAnalysis\Output\VCMay2023\VC
+full_path=file.path(main_path,subdir)
 
-file_path=c("C:/Users/danthomp/OneDrive - NRCan RNCan/DRDC Smoke Sensors/WildfireSensorDataAnalysis/WildfireSensorDataAnalysis/Output/VCMay2023/VC/")
-
-Alerts <- list.files(path=file_path, "Alerts*.csv$", recursive = T, full.names = T)
+Alerts <- list.files(path=full_path, "Alerts*.csv$", recursive = T, full.names = T)
 
 for(i in seq(1:length(Alerts)))
 {
@@ -271,15 +268,13 @@ write.csv(all_data,"VC_all_data.csv")
 ```
 
 ```{r load-data, message=FALSE, warning=FALSE, include=FALSE}
-setwd("~/DRDC-smoke")
-
 ##load tabular summary (as square dataframe, can make it long here)
 
 
 ## load ACIS data https://acis.alberta.ca/acis/weather-data-viewer.jsp for nearby Kinsella Research Station with both 10-m open wind speeds as well as hourly averaged solar radiation
 #https://acis.alberta.ca/acis/app/weather-station/7290/details#metadata
 
-ACISHourlyData <- read_csv("~/DRDC-smoke/ACISHourlyData-20240401-20240430-PID081045983.csv",col_types = cols(time = col_character()))
+ACISHourlyData <- read_csv("ACISHourlyData-20240401-20240430-PID081045983.csv",col_types = cols(time = col_character()))
 
 ###set units here for weather data
 #units(ACISHourlyData$temp) <- "C"
@@ -309,16 +304,16 @@ ACISHourlyData <- ACISHourlyData %>% mutate(isol = isol/1000)
 
 
 ##read in the QC airport data with visibility and hourly precip:
-VC2023HourlyData <- read_csv("~/DRDC-smoke/en_climate_hourly_QC_7016293_05-2023_P1H.csv",col_types = cols(time = col_character()))
+VC2023HourlyData <- read_csv("en_climate_hourly_QC_7016293_05-2023_P1H.csv",col_types = cols(time = col_character()))
 VC2023HourlyData$time <- ymd_hm(VC2023HourlyData$time,tz="Etc/GMT+5") ##ECCC data is always LST
 
-RC2024HourlyData <- read_csv("~/DRDC-smoke/BCWS_394_Rock_Cr_hourly_gapfilled.csv",col_types = cols(time = col_character()))
+RC2024HourlyData <- read_csv("BCWS_394_Rock_Cr_hourly_gapfilled.csv",col_types = cols(time = col_character()))
 RC2024HourlyData$time <- ymd_hms(RC2024HourlyData$time,tz="Etc/GMT+8") ##assuming PST 
 ```
 
 ```{r calc-GFMC-hourly, message=FALSE, warning=FALSE, include=FALSE}
 
-setwd("~/DRDC-smoke/")
+
 ### these need to run in the same dir as the .rproj:
 source("NG_FWI.r")
 source("util.r")
@@ -472,7 +467,7 @@ HourlyFwiFbp_RC <- cbind(RC2024HourlyFWI,HourlyFBP_RC)
 
 ###load the Wainwright data:
 
-WainwrightApr2024 <- read_csv("~/DRDC-smoke/WainwrightApr2024.csv", 
+WainwrightApr2024 <- read_csv("WainwrightApr2024.csv", 
 col_types = cols(ReportedIgnTime = col_character(), 
 FirstWarningTime = col_character(), 
 FirstAlertTime = col_character(), 
@@ -577,7 +572,7 @@ ggplot(Compare_FWI2025_1987,aes(FWI,as.numeric(fwi)))+geom_point() +geom_abline(
 
 ###load the Valcartier data:
 
-VC2023FireReports <- read_csv("~/DRDC-smoke/Valcartier2023.csv", 
+VC2023FireReports <- read_csv("Valcartier2023.csv", 
 col_types = cols(ReportedIgnTime = col_character(), 
 FirstWarningTime = col_character(), 
 FirstAlertTime = col_character(), 
@@ -627,7 +622,7 @@ ggsave("VC-FWI.png",height=8,width=8,units=c("in"))
 
 ###load the Rock Creek data:
 
-RC2024FireReports <- read_csv("~/DRDC-smoke/RC2024.csv", 
+RC2024FireReports <- read_csv("RC2024.csv", 
 col_types = cols(ReportedIgnTime = col_character(), 
 FirstWarningTime = col_character(), 
 FirstAlertTime = col_character(), 
@@ -676,7 +671,7 @@ ggsave("RC-FWI.png",height=8,width=8,units=c("in"))
 
 
 ####load the fire records, determine which are line ignitions? Maybe re-run the FBP script just for those hours?
-WainwrightApr2024 <- read_csv("~/DRDC-smoke/WainwrightApr2024.csv", 
+WainwrightApr2024 <- read_csv("WainwrightApr2024.csv", 
 col_types = cols(ReportedIgnTime = col_character(), 
 FirstWarningTime = col_character(), 
 FirstAlertTime = col_character(), 
@@ -751,7 +746,7 @@ WainwrightApr2024$FirstGOEStime <- ymd_hm(WainwrightApr2024$FirstGOEStime,tz="UT
 ####next, for each fire in the "WainwrightApr2024" table, grab the location of the sensor providing the warning, and grab the two lat/longs, use st_distance:
 
 #https://gis.stackexchange.com/questions/371104/calculate-st-distance-between-the-point-in-km-m
-Sensor_Locs <- read.csv("~/DRDC-smoke/Sensor_Locs.csv")
+Sensor_Locs <- read.csv("Sensor_Locs.csv")
 
 Sensor_Locs <- Sensor_Locs %>% rename(y = Lat, x = Long)
 
@@ -880,14 +875,14 @@ FireGrowthTimeSeries <- FireGrowthTimeSeries %>% inner_join(FinalSize) %>% inner
 ###then, delete rows where A > reported final size * 120% or so
 FireGrowthTimeSeries <- FireGrowthTimeSeries %>% filter(A<ReportedFinalArea*1.2)
 
-write.csv(FireGrowthTimeSeries,"~/DRDC-smoke/CFB_Wainwright_FireGrowthTimeSeries.csv")
+write.csv(FireGrowthTimeSeries,"CFB_Wainwright_FireGrowthTimeSeries.csv")
 
 ```
 
 ```{r load-fire-records-run-FBP-VC, message=FALSE, warning=FALSE, include=FALSE}
 
 ####load the fire records, determine which are line ignitions? Maybe re-run the FBP script just for those hours?
-VC2023FireReports <- read_csv("~/DRDC-smoke/Valcartier2023.csv", 
+VC2023FireReports <- read_csv("Valcartier2023.csv", 
 col_types = cols(ReportedIgnTime = col_character(), 
 FirstWarningTime = col_character(), 
 FirstAlertTime = col_character(), 
@@ -1059,7 +1054,7 @@ FireGrowthTimeSeries_VC <- FireGrowthTimeSeries_VC %>% inner_join(FinalSize) %>%
 ###then, delete rows where A > reported final size * 120% or so
 FireGrowthTimeSeries_VC <- FireGrowthTimeSeries_VC %>% filter(A<ReportedFinalArea*1.2)
 
-write.csv(FireGrowthTimeSeries_VC,"~/DRDC-smoke/CFB_Valcartier_FireGrowthTimeSeries.csv")
+write.csv(FireGrowthTimeSeries_VC,"CFB_Valcartier_FireGrowthTimeSeries.csv")
 
 ```
 
@@ -1236,7 +1231,7 @@ FireGrowthTimeSeries_RC <- FireGrowthTimeSeries_RC %>% inner_join(FinalSize) %>%
 ###then, delete rows where A > reported final size * 120% or so
 FireGrowthTimeSeries_RC <- FireGrowthTimeSeries_RC %>% filter(A<ReportedFinalArea*1.2)
 
-write.csv(FireGrowthTimeSeries_RC,"~/DRDC-smoke/RockCreek_FireGrowthTimeSeries.csv")
+write.csv(FireGrowthTimeSeries_RC,"RockCreek_FireGrowthTimeSeries.csv")
 
 ```
 
@@ -1281,7 +1276,7 @@ The final large fire of the season, the WR-16 prescribed fire, was ignited at 10
 VIIRS detections were made in all five large fires at Wainwright. In three cases, morning ignitions between 10:00 to 11:00 local standard time resulted in VIIRS detections 94 to 160 minutes later. Of these, only one VIIRS detection was faster than the smoke sensors, and the fires in all cases far exceeded the minimum VIIRS detection radiative power of 0.5 MW. Two fires (WR-15 and WR-08) only had fire detections during the 01:00 nighttime overpass as residual flaming was visible. In the case of WR-15, the fire's ignition was at 16:07 local time, and therefore after the S-NPP and NOAA satellite daytime overpasses. GOES geostationary detections were only made in two fires (WR-12 and WR-14), with very rapid detection of WR-14 within minutes of the reported ignition while the fire was approximately 5 ha and near the GOES FRP detection threshold of 85 MW.
 
 ```{r WR-map, echo=FALSE, fig.cap="\\label{fig::WR-map}Wainwright study area showing fire, sensors, and dotted lines linking the first fire detection (warning or alert) for each detected fire.  Arrow indicates observed wind direction at the time of detection.", message=FALSE, warning=FALSE, out.width="95%" }
-knitr::include_graphics("~/DRDC-smoke/WR.png")
+knitr::include_graphics("WR.png")
 
 ```
 
@@ -1456,9 +1451,9 @@ write.csv(all_sites_x_y_join,"all_fires_w_wx_detction_sites.csv")
 ```{r all-alerts-distance-duration-calcs, message=FALSE, warning=FALSE, include=FALSE}
 
 ###load up the dataframe of all the alerts and their duration (still need peak PM2.5 out of WR.csv)
-all_alerts <- read.csv("~/DRDC-smoke/all_alerts.csv")
+all_alerts <- read.csv("all_alerts.csv")
 
-WR_PM <- read.csv("~/DRDC-smoke/WR.csv")
+WR_PM <- read.csv("WR.csv")
 WR_PM$time <- ymd_hms(WR_PM$time)
 
 ##then figure out the distance between each of these "Station" and the FireName lat/long
@@ -1606,7 +1601,7 @@ ggsave("plot-MW.png",height=8,width=8,units=c("in"))
 ```
 
 ```{r Fig5-plot-MW, eval=FALSE, fig.cap="\\label{fig::Fig5-plot-MW}Modelled fire radiative power over time as compared to fire detection times by various modes.", message=FALSE, warning=FALSE, include=FALSE, out.width="75%"}
-knitr::include_graphics("~/DRDC-smoke/plot-MW.png")
+knitr::include_graphics("plot-MW.png")
 
 ```
 
